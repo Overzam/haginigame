@@ -33,6 +33,8 @@ points = 0
 
 game_start = 0
 
+timer_de_fin = 1500
+
 while True:
     screen.fill((0,0,0))
 
@@ -92,6 +94,21 @@ while True:
         points = 0
 
     print(points)
+    # victoire a 50 points
+    if points == 50:
+        print("victoire")
+        pygame.quit()
+        sys.exit()
+
+    if game_start == 1:
+        if timer_de_fin > 0:
+            timer_de_fin -= 1
+        else:
+            print("défaite")
+            pygame.quit()
+            sys.exit()
+
+    print(timer_de_fin)
 
     for event in pygame.event.get():
 
