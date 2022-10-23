@@ -2,6 +2,7 @@ import sys
 
 import pygame
 import random
+import time
 
 from pygame import *
 pygame.init()
@@ -17,11 +18,13 @@ joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_coun
 colors = [(255, 0, 0),(0, 255, 0),(0, 0, 255)]
 
 bout_OK = 0
+
 gauche = 0
 droite = 0
 haut = 0
 bas = 0
 
+color_switch = 0
 
 while True:
     screen.fill((0,0,0))
@@ -30,12 +33,6 @@ while True:
     pygame.draw.circle(screen, (255, 0, 0), (235,150),40, 2)
     pygame.draw.circle(screen, (255, 0, 0), (315,235),40, 2)
     pygame.draw.circle(screen, (255, 0, 0), (235,315),40, 2)
-
-    #dead zone joystick
-    '''if abs(motion[0]) < 0.1:
-        motion[0] = 0
-    if abs(motion[1]) < 0.1:
-        motion[1] = 0'''
 
     if bout_OK == 1:
         var_sortie = random.randrange(1, 5, 1)
@@ -50,16 +47,16 @@ while True:
             bas = 1
 
     if gauche == 1:
-        pygame.draw.rect(screen, (255, 0, 0), (135, 220, 30, 30))
+        pygame.draw.rect(screen, colors[color_switch], (135, 220, 30, 30))
         bout_OK = 0
     if droite == 1:
-        pygame.draw.rect(screen, (255, 0, 0), (300,220,30,30))
+        pygame.draw.rect(screen, colors[color_switch], (300,220,30,30))
         bout_OK = 0
     if haut == 1:
-        pygame.draw.rect(screen, (255, 0, 0), (220,135,30,30))
+        pygame.draw.rect(screen, colors[color_switch], (220,135,30,30))
         bout_OK = 0
     if bas == 1:
-        pygame.draw.rect(screen, (255, 0, 0), (220,300,30,30))
+        pygame.draw.rect(screen, colors[color_switch], (220,300,30,30))
         bout_OK = 0
 
     for event in pygame.event.get():
@@ -76,46 +73,25 @@ while True:
                 if bas == 1:
                     bout_OK = 1
                     bas = 0
-                    print("taper")
+                    color_switch = (color_switch + 1) % len(colors)
             # B button
             if event.button == 1:
                 if droite == 1:
                     bout_OK = 1
                     droite = 0
-                    print("taper")
+                    color_switch = (color_switch + 1) % len(colors)
             # X button
             if event.button == 2:
                 if gauche == 1:
                     bout_OK = 1
                     gauche = 0
-                    print("taper")
+                    color_switch = (color_switch + 1) % len(colors)
             # Y button
             if event.button == 3:
                 if haut == 1:
                     bout_OK = 1
                     haut = 0
-                    print("taper")
-
-
-
-
-
-        # D-pad
-        '''if event.type == JOYHATMOTION:
-            #print(event)
-            if event.value == (0,1):
-                print("haut")
-                motion = event.value
-            if event.value == (0,-1):
-                print("bas")
-                motion = event.value
-            if event.value == (-1,0):
-                print("gauche")
-                motion = event.value
-            if event.value == (1,0):
-                print("droite")
-                motion = event.value
-            motion = event.value'''
+                    color_switch = (color_switch + 1) % len(colors)
 
         # affiche quand la manette se connecte et déconnecte
         if event.type == JOYDEVICEADDED:
@@ -130,6 +106,5 @@ while True:
             pygame.quit()
             sys.exit()
 
-    #print(motion)
     pygame.display.update()
     clock.tick(60)
