@@ -1,31 +1,35 @@
 import sys
 
-import pygame
+import pygame as pyg
 
 from pygame import *
-pygame.init()
-pygame.display.set_caption('hagini game')
-screen = pygame.display.set_mode((500,500), 0, 32)
-clock = pygame.time.Clock()
+pyg.init()
+pyg.display.set_caption('hagini game')
 
-pygame.joystick.init()
-joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+width = 1920
+height = 1080
+screen = pyg.display.set_mode((width,height), 0, 32)
+
+clock = pyg.time.Clock()
+
+pyg.joystick.init()
+joysticks = [pyg.joystick.Joystick(i) for i in range(pyg.joystick.get_count())]
 
 colors = [(255, 0, 0),(0, 255, 0),(0, 0, 255)]
 
-my_square = pygame.Rect(50, 50, 50, 50)
+my_square = pyg.Rect(50, 50, 50, 50)
 my_square_color = 0
 motion = [0, 0]
 
-my_square_clavier = pygame.Rect(400,50,50,50)
+my_square_clavier = pyg.Rect(400,50,50,50)
 my_square_clavier_color = 0
 motion_clavier = [0, 0]
 
 while True:
     screen.fill((0,0,0))
 
-    pygame.draw.rect(screen, colors[my_square_color], my_square)
-    pygame.draw.rect(screen, colors[my_square_clavier_color], my_square_clavier)
+    pyg.draw.rect(screen, colors[my_square_color], my_square)
+    pyg.draw.rect(screen, colors[my_square_clavier_color], my_square_clavier)
 
     #dead zone joystick
     '''if abs(motion[0]) < 0.1:
@@ -39,7 +43,7 @@ while True:
     my_square_clavier.x += motion_clavier[0] * 10
     my_square_clavier.y += motion_clavier[1] * -10
 
-    for event in pygame.event.get():
+    for event in pyg.event.get():
         # support manette
 
         # bouton A B X Y
@@ -67,38 +71,38 @@ while True:
 
         # affiche quand la manette se connecte et déconnecte
         if event.type == JOYDEVICEADDED:
-            joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+            joysticks = [pyg.joystick.Joystick(i) for i in range(pyg.joystick.get_count())]
             print("manette connecté")
         if event.type == JOYDEVICEREMOVED:
-            joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+            joysticks = [pyg.joystick.Joystick(i) for i in range(pyg.joystick.get_count())]
             print("manette déconnecté")
 
         # support clavier
-        if event.type == pygame.KEYDOWN:
+        if event.type == pyg.KEYDOWN:
             print(event)
-            if pygame.key.get_pressed()[K_z]:
+            if pyg.key.get_pressed()[K_z]:
                 print("haut")
                 motion_clavier[1] = 1
-            if pygame.key.get_pressed()[K_s]:
+            if pyg.key.get_pressed()[K_s]:
                 print("bas")
                 motion_clavier[1] = -1
-            if pygame.key.get_pressed()[K_q]:
+            if pyg.key.get_pressed()[K_q]:
                 print("gauche")
                 motion_clavier[0] = -1
-            if pygame.key.get_pressed()[K_d]:
+            if pyg.key.get_pressed()[K_d]:
                 print("droite")
                 motion_clavier[0] = 1
-            if pygame.key.get_pressed()[K_j]:
+            if pyg.key.get_pressed()[K_j]:
                 my_square_clavier_color = (my_square_clavier_color + 1) % len(colors)
 
-        if event.type == pygame.KEYUP:
+        if event.type == pyg.KEYUP:
 
             print(event)
 
-            xd = pygame.key.get_pressed()[K_d]
-            xz = pygame.key.get_pressed()[K_z]
-            xs = pygame.key.get_pressed()[K_s]
-            xq = pygame.key.get_pressed()[K_q]
+            xd = pyg.key.get_pressed()[K_d]
+            xz = pyg.key.get_pressed()[K_z]
+            xs = pyg.key.get_pressed()[K_s]
+            xq = pyg.key.get_pressed()[K_q]
 
             if motion_clavier[1] == 1:
                 if xz == False:
@@ -119,9 +123,9 @@ while True:
 
         # fermer le jeu
         if event.type == QUIT:
-            pygame.quit()
+            pyg.quit()
             sys.exit()
 
     #print(motion)
-    pygame.display.update()
+    pyg.display.update()
     clock.tick(60)

@@ -1,18 +1,19 @@
 import sys
 
-import pygame
+import pygame as pyg
 import random
 
 from pygame import *
-pygame.init()
-pygame.display.set_caption('whack-a-mole')
-screen = pygame.display.set_mode((500,500), 0, 32)
-clock = pygame.time.Clock()
+pyg.init()
+pyg.display.set_caption('whack-a-mole')
+
+width = 1920
+height = 1080
+screen = pyg.display.set_mode((width,height), 0, 32)
+
+clock = pyg.time.Clock()
 
 random.seed()
-
-pygame.joystick.init()
-joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 
 colors = [(255, 0, 0),(0, 255, 0),(0, 0, 255)]
 
@@ -33,15 +34,15 @@ points = 0
 
 game_start = 0
 
-timer_de_fin = 1500
+timer_de_fin = 2000
 
 while True:
     screen.fill((0,0,0))
 
-    pygame.draw.circle(screen, (255, 0, 0), (150,235),40, 2)
-    pygame.draw.circle(screen, (255, 0, 0), (235,150),40, 2)
-    pygame.draw.circle(screen, (255, 0, 0), (315,235),40, 2)
-    pygame.draw.circle(screen, (255, 0, 0), (235,315),40, 2)
+    pyg.draw.circle(screen, (255, 0, 0), (width/2.28, height/2),40, 2) # gauche
+    pyg.draw.circle(screen, (255, 0, 0), (width/2, height/2.5),40, 2) # haut
+    pyg.draw.circle(screen, (255, 0, 0), (width/1.8,height/2),40, 2) # droite
+    pyg.draw.circle(screen, (255, 0, 0), (width/2, height/1.65),40, 2) # bas
 
     # généré une nouvelle valeur, un nouveau carré
     if bout_OK == 1:
@@ -59,19 +60,19 @@ while True:
 
     # dessine le carré / empêche la création d'une nouvelle valeur
     if gauche == 1:
-        pygame.draw.rect(screen, colors[color_switch], (135, 220, 30, 30))
+        pyg.draw.rect(screen, colors[color_switch], (width/2.32, height/2.05, 30, 30)) # + 0.04 / + 0.05
         bout_OK = 0
 
     if droite == 1:
-        pygame.draw.rect(screen, colors[color_switch], (300,220,30,30))
+        pyg.draw.rect(screen, colors[color_switch], (width/1.826,height/2.05,30,30))
         bout_OK = 0
 
     if haut == 1:
-        pygame.draw.rect(screen, colors[color_switch], (220,135,30,30))
+        pyg.draw.rect(screen, colors[color_switch], (width/2.03, height/2.59,30,30))
         bout_OK = 0
 
     if bas == 1:
-        pygame.draw.rect(screen, colors[color_switch], (220,300,30,30))
+        pyg.draw.rect(screen, colors[color_switch], (width/2.03, height/1.69,30,30))
         bout_OK = 0
 
     # compteur qui fait disparaitre le carré et crée une nouvelle valeur (-1 point)
@@ -97,7 +98,7 @@ while True:
     # victoire a 50 points
     if points == 50:
         print("victoire")
-        pygame.quit()
+        pyg.quit()
         sys.exit()
 
     if game_start == 1:
@@ -105,24 +106,23 @@ while True:
             timer_de_fin -= 1
         else:
             print("défaite")
-            pygame.quit()
+            pyg.quit()
             sys.exit()
 
     print(timer_de_fin)
 
-    for event in pygame.event.get():
+    for event in pyg.event.get():
 
-        # bouton A B X Y
-        if event.type == JOYBUTTONDOWN:
+        if event.type == KEYDOWN:
             #print(event)
             # start button
-            if event.button == 7: # demarrer la partie
+            if event.key == pyg.K_SPACE: # demarrer la partie
                 bout_OK = 1
                 s = secondes
                 game_start = 1
 
-            # A button ( genere une nouvelle valeur, change la couleur, reset le timer, +1 point )
-            if event.button == 0:
+            # bas ( genere une nouvelle valeur, change la couleur, reset le timer, +1 point )
+            if event.key == K_DOWN:
                 # vérifie si le bouton appyuer est le bon
                 if bas == 1:
                     bout_OK = 1
@@ -132,8 +132,8 @@ while True:
                     points += 1
                 else:
                     points -= 1
-            # B button ( genere une nouvelle valeur, change la couleur, reset le timer, +1 point )
-            if event.button == 1:
+            # droite ( genere une nouvelle valeur, change la couleur, reset le timer, +1 point )
+            if event.key == K_RIGHT:
                 # vérifie si le bouton appyuer est le bon
                 if droite == 1:
                     bout_OK = 1
@@ -143,8 +143,8 @@ while True:
                     points += 1
                 else:
                     points -= 1
-            # X button ( genere une nouvelle valeur, change la couleur, reset le timer, +1 point )
-            if event.button == 2:
+            # gauche ( genere une nouvelle valeur, change la couleur, reset le timer, +1 point )
+            if event.key == K_LEFT:
                 # vérifie si le bouton appyuer est le bon
                 if gauche == 1:
                     bout_OK = 1
@@ -155,7 +155,7 @@ while True:
                 else:
                     points -= 1
             # Y button ( genere une nouvelle valeur, change la couleur, reset le timer, +1 point )
-            if event.button == 3:
+            if event.key == K_UP:
                 # vérifie si le bouton appyuer est le bon
                 if haut == 1:
                     bout_OK = 1
@@ -168,16 +168,16 @@ while True:
 
         # affiche quand la manette se connecte et déconnecte
         if event.type == JOYDEVICEADDED:
-            joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+            joysticks = [pyg.joystick.Joystick(i) for i in range(pyg.joystick.get_count())]
             print("manette connecté")
         if event.type == JOYDEVICEREMOVED:
-            joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+            joysticks = [pyg.joystick.Joystick(i) for i in range(pyg.joystick.get_count())]
             print("manette déconnecté")
 
         # fermer le jeu
         if event.type == QUIT:
-            pygame.quit()
+            pyg.quit()
             sys.exit()
 
-    pygame.display.update()
+    pyg.display.update()
     clock.tick(60)
