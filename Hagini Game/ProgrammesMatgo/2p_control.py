@@ -1,8 +1,8 @@
 import sys
 
 import pygame as pyg
-from pygame import *
 
+from pygame import *
 pyg.init()
 pyg.display.set_caption('hagini game')
 
