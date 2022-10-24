@@ -8,13 +8,23 @@ pyg.font.init()
 pyg.display.set_caption('hagini game')
 screen = pyg.display.set_mode((width, height))
 clock = pyg.time.Clock()
-fond = pyg.image.load('image/backroom.png')
-fond = pyg.transform.scale(fond, (height, width))
+background = pyg.image.load("image/backroom.png")
+background = pyg.transform.scale(background, (height, width))
+fond = background.convert()
+screen.blit(fond, (0, 0))
+pyg.display.flip()
 
-
-while True:
-    screen.blit(fond, (0, 0))
-    for event in pyg.event.get():
-        if event.type == pyg.QUIT:
+def quit():
+    if event.type == pyg.KEYDOWN :
+        if event.type == pyg.K_ESCAPE :
             pyg.quit()
             exit()
+
+while True:
+    for event in pyg.event.get():
+        if event.type == pyg.KEYDOWN:
+            if event.key == pyg.K_a :
+                print("sus")
+            if event.key == pyg.K_ESCAPE :
+                pyg.quit()
+                exit()
