@@ -1,17 +1,10 @@
 import sys
 
 import pygame as pyg
-
-<<<<<<< HEAD
 from pygame import *
+
 pyg.init()
 pyg.display.set_caption('hagini game')
-=======
-pygame.init()
-pygame.display.set_caption('hagini game')
-screen = pygame.display.set_mode((500,500), 0, 32)
-clock = pygame.time.Clock()
->>>>>>> 1bb448a1585bafacc853a0b3c8639a54385ef352
 
 width = 1920
 height = 1080
