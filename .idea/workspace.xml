@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b46f7da2-08ab-4d4c-afa6-a377d839aa6d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Hagini Game/ProgrammesThomas/backrooms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/haginigame.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/haginigame.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Hagini Game/ProgrammesMatgo/2p_control.py" beforeDir="false" afterPath="$PROJECT_DIR$/Hagini Game/ProgrammesMatgo/2p_control.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hagini Game/ProgrammesThomas/backrooms.py" beforeDir="false" afterPath="$PROJECT_DIR$/Hagini Game/ProgrammesThomas/backrooms.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
