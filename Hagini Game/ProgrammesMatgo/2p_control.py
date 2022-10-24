@@ -2,7 +2,6 @@ import sys
 
 import pygame
 
-from pygame import *
 pygame.init()
 pygame.display.set_caption('hagini game')
 screen = pygame.display.set_mode((500,500), 0, 32)
