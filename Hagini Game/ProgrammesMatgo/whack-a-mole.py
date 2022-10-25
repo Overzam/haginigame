@@ -117,9 +117,10 @@ while True:
             #print(event)
             # start button
             if event.key == pyg.K_SPACE: # demarrer la partie
-                bout_OK = 1
-                s = secondes
-                game_start = 1
+                if game_start == 0:
+                    bout_OK = 1
+                    s = secondes
+                    game_start = 1
 
             # bas ( genere une nouvelle valeur, change la couleur, reset le timer, +1 point )
             if event.key == K_DOWN:
