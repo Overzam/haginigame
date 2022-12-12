@@ -49,4 +49,4 @@ while run:
     if texte_est_affiche:
         screen.blit(texte, (100,100))
     
-    pyg.display.flip()
+    pyg.display.flip()sqdc
