@@ -8,9 +8,6 @@ Created on Mon Dec  5 15:54:27 2022
 import pygame as pyg
 from random import randint
 
-pyg.init()
-pyg.font.init()
-
 height = 500
 width = 500
 
@@ -48,7 +45,7 @@ while run:
         if event.type == pyg.KEYDOWN:
             if event.key == pyg.K_d:
                 if texte_est_affiche:
-                    x_tank += 1
+                    x_tank += 10
     countdown = font.render(str(seconds), True, grey, black)
     texte = font.render("TAP", True, grey, black)
     # definition et affichage du compte a rebourd avant la fin du jeu
