@@ -17,8 +17,6 @@ y_explo = 100
 screen = pyg.display.set_mode((height, width))
 
 pyg.display.set_caption('boom')
-icon = pyg.image.load('img_dylan/imgicon.png')
-pyg.display.set_icon(icon)
 
 background = pyg.image.load("img_dylan/fond2.png")
 background = pyg.transform.scale(background, (height, width))
