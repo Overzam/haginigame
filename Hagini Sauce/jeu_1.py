@@ -1,8 +1,6 @@
 # importation des bibliotheque a utiliser
 import pygame as pyg
 from sys import exit
-from random import randint
-from menu import base_menu
 
 height = 1920
 width = 1080
@@ -74,83 +72,4 @@ class explo(pyg.sprite.Sprite):
             self.image = self.sprites[int(self.current_sprite)]
 
 
-def despawn():
-    global background
-    global losescreen
-    global xsoldat1
-    global xsoldat
-    global xtank
-    xsoldat1 = -1000
-    xsoldat = -1000
 
-
-def amongus():
-    despawn()
-    music_drip = pyg.mixer.Sound('son/amongus.wav')
-    music_drip.set_volume(1)
-    music_drip.play()
-    while True:
-        bgamong = pyg.image.load('img_dylan/amongus.jpg')
-        bgamong = pyg.transform.scale(bgamong, (height, width))
-        screen.blit(bgamong, (0, 0))
-        pyg.display.update()
-        for event in pyg.event.get():
-            if event.type == pyg.KEYDOWN:
-                if event.key == pyg.K_ESCAPE:
-                    music_drip.stop()
-                    base_menu()
-            if event.type == pyg.QUIT:
-                pyg.quit()
-                exit()
-
-
-def win():
-    despawn()
-    music_victoire = pyg.mixer.Sound('son/musique_victoire.mp3')
-    music_victoire.set_volume(1)
-    music_victoire.play()
-    while True:
-        bgjeudylan = pyg.image.load("img_dylan/win.jpg")
-        bgjeudylan = pyg.transform.scale(bgjeudylan, (height, width))
-        screen.blit(bgjeudylan, (0, 0))
-        pyg.display.update()
-        for event in pyg.event.get():
-            if event.type == pyg.KEYDOWN:
-                if event.key == pyg.K_ESCAPE:
-                    music_victoire.stop()
-                    base_menu()
-            if event.type == pyg.QUIT:
-                pyg.quit()
-                exit()
-
-
-def loose():
-    despawn()
-    #music_defaite = pyg.mixer.Sound('son/music_defaite.mp3')
-    #music_defaite.set_volume(1)
-    #music_defaite.play()
-    while True:
-        bgloose = pyg.image.load("img_dylan/game_over.jpg")
-        bgloose = pyg.transform.scale(bgloose, (height, width))
-        screen.blit(bgloose, (0, 0))
-        pyg.display.update()
-        for event in pyg.event.get():
-            if event.type == pyg.KEYDOWN:
-                if event.key == pyg.K_ESCAPE:
-                    #music_defaite.stop()
-                    base_menu()
-            if event.type == pyg.QUIT:
-                pyg.quit()
-                exit()
-
-
-def shake(screen_shake):
-    while screen_shake != 0:
-        screen_shake -= 1
-        render_distance = [0, 0]
-        render_distance[0], render_distance[1] = randint(0, 8) - 4, randint(0, 8) - 4
-        screen.blit(background, render_distance)
-
-
-
-base_menu()
