@@ -1,5 +1,9 @@
 #importation des bibliotheques
-import pygame as pyg, sys, random
+import pygame as pyg, random
+from hit_animation import hit
+from class_prof import Prof
+from moins_5_animation import moins_5
+from win_and_loose import loose, win
 
 #definition de l'ecran et du titre du jeu
 width, height = 1920, 1080
@@ -10,27 +14,30 @@ pyg.display.set_caption(titre)
 #initialisation des modules
 pyg.init()
 
-#definition du fond du jeu
-background = pyg.image.load("fond2.png").convert()
-background = pyg.transform.scale(background, (width, height))
-
 #timer du jeu 
 clock = pyg.time.Clock()
 start_ticks = pyg.time.get_ticks()
 seconds = 0
 
-#definition des images
-tank = pyg.image.load('Tank.png').convert_alpha()
+
 
 #definition des variables
-tank_affiche = False
-tank_tue = False
+prof_affiche = True
+peut_taper_prof = True
+x_prof, y_prof = 200, 200
+hit_anim = pyg.sprite.Group()
+degat = hit(x_prof - 100, y_prof + 150)
+hit_anim.add(degat)
+prof = Prof(200, 200, 100)
 
+moins_5_animation = pyg.sprite.Group()
+anim_degat = moins_5(x_prof + 120, y_prof - 40)
+moins_5_animation.add(anim_degat)
 
 #classe pour les timings ou il faut reagir
 class Timing:
-    premier = random.randint(3,4)
-    deuxieme = random.randint(6,7)
+    premier = random.randint(1,2)
+    deuxieme = random.randint(3,4)
 
 
 #debut de la boucle du jeu
@@ -49,32 +56,50 @@ while run:
             if event.key == pyg.K_SPACE:
                 if tank_affiche:
                     tank_affiche = False
-                    tank_tue = True
-                    
-    
+        if event.type == pyg.MOUSEBUTTONDOWN and pyg.mouse.get_pressed()[0]:
+            if peut_taper_prof:
+                degat.animate()
+                prof.prend_degat(5)
+                anim_degat.animate()
+
     #timer du jeu
     seconds = ((pyg.time.get_ticks() - start_ticks) / 1000)
 
-    #reaffichage du fond du jeu
-    screen.blit(background,(0,0))
+    screen.fill((12,24,36))
 
-    #si le tank est vivant, check les conditions pour le faire apparaitre,
-    #sinon ne pas le faire apparaitre
-    if not tank_tue:
-        if Timing.premier + 1 >= seconds >= Timing.premier :
-            tank_affiche = True
-        elif Timing.deuxieme + 1 >= seconds >= Timing.deuxieme :
-            tank_affiche = True
-        else:
-            tank_affiche = False
+    prof.barre_de_vie()
     
+    if Timing.deuxieme > seconds > Timing.premier :
+        prof.update(1)
+
+    if Timing.deuxieme + 3 > seconds > Timing.deuxieme :
+        prof.update(2)
+
+    if prof.sprite_actuel == 2:
+        peut_taper_prof = False
+
+
     #si il est affiche, l'affiche
-    if tank_affiche:
-        screen.blit(tank, (width//2, height//2))
+    if prof_affiche:
+        prof.draw(screen)
     
-    #le faire revivre si il est entre les deux timing
-    if Timing.deuxieme - 1 > seconds > Timing.premier + 1:
-        tank_tue = False
+
+    hit_anim.draw(screen)
+    hit_anim.update(0.5)
+
+    moins_5_animation.draw(screen)
+    moins_5_animation.update(0.5)
+
+    if seconds > Timing.deuxieme + 1:
+        if prof.pv > 0:
+            loose()
+    if prof.pv <= 0:
+        win()
+
+
 
     #actualiser l'affichage du jeu
     pyg.display.flip()
+
+    
+    clock.tick(60)
