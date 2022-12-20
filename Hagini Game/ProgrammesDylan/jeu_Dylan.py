@@ -120,7 +120,7 @@ while run:
     plus_5_animation.update(0.40)
 
 
-    chance  = randint(1, 300)
+    chance  = randint(1, 200)
     if not prof_va_se_retourne:
         if chance == 1:
             prof_se_retourne = True
