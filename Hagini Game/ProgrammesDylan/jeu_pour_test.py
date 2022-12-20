@@ -9,7 +9,7 @@ screen = pyg.display.set_mode((width, height))
 pyg.display.set_caption(titre)
 clock = pyg.time.Clock()
 
-tank = pyg.image.load('Tank.png').convert_alpha()
+tank = pyg.image.load('img/voisin.png').convert_alpha()
 tank = pyg.transform.scale(tank,(500,500))
 
 
