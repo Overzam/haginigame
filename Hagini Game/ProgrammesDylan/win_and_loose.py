@@ -8,7 +8,7 @@ pyg.font.init()
 
 font = pyg.font.Font('freesansbold.ttf', 64)
 txt_perdant = "ratio looser"
-txt_gagnant = "gg bb"
+txt_gagnant = "gg bb, bg*"
 bleu = (255,255,0)
 rouge = (100, 200, 0)
 

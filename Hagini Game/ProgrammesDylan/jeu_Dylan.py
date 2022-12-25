@@ -1,5 +1,5 @@
 #importation des bibliotheques
-import pygame as pyg, random
+import pygame as pyg
 from hit_animation import hit
 from class_prof import Prof
 from voisin import Voisin
@@ -7,7 +7,8 @@ from moins_5_animation import moins_5
 from plus_5_animation import plus_5
 from win_and_loose import loose, win
 from random import randint
-
+from boullette import Boulette
+from munition import Munition
 
 #definition de l'ecran et du titre du jeu
 width, height = 1920, 1080
@@ -22,27 +23,57 @@ pyg.init()
 clock = pyg.time.Clock()
 start_ticks = pyg.time.get_ticks()
 seconds = 0
+save_seconds = seconds
 
 
-
-#definition des variables
+#definition des variables du prof
 prof_affiche = True
 prof_se_retourne = False
 prof_va_se_retourne = False
+x_prof, y_prof = 500, 300
+prof = Prof(x_prof, y_prof)
+
+#definition des variables des munitions
+munition_affiche = True
+munition = Munition()
+
+#definition des variables du voisin
 voisin_affiche = True
 peut_taper_voisin = True
 voisin_peut_gagner_vie = False
 voisin_a_gagner_vie = False
-x_prof, y_prof = 200, 200
-x_voisin, y_voisin = 1000, 700
-prof = Prof(x_prof, y_prof)
+x_voisin, y_voisin = width-400, 600
 voisin = Voisin(x_voisin, y_voisin, 350)
+
+#definition des variables de la boulette de papier
+boulette_lance = False
+boulette_affiche = False
+boulette_a_atteint = False
+boulette_x, boulette_y = 960, 700
+boulette = Boulette(boulette_x, boulette_y)
+nb_boulette = 3
+
+#definition des variables qui determine si on a gagné ou perdu
 perdu = False
 gagne = False
+
+#definition font qui affichera les secondes
 font = pyg.font.Font('freesansbold.ttf', 64)
-save_seconds = seconds
 
+#definition du fond du jeu
+background = pyg.image.load('img/fond.png')
+background = pyg.transform.scale(background, (width, height))
 
+#definition du tremblement du voisin quand on clique
+voisin_shake = 0
+shake_saver = [0] * 2
+voisin_shake_termine = False
+
+#definition du tremblement du prof quand on clique
+prof_shake = 0
+prof_shake_termine = False
+
+#definition des variables pour animer l'animation de degat, de +5 et -5
 hit_anim = pyg.sprite.Group()
 degat = hit(x_voisin - 150, y_voisin - 100)
 hit_anim.add(degat)
@@ -65,9 +96,8 @@ class Timing:
 #debut de la boucle du jeu
 run = True
 while run:
-    countdown = font.render(str(round(30-seconds)), True, (255, 0, 0), (0, 255, 0))
     
-
+    
     for event in pyg.event.get():
         #terminer la boucle quand le joueur quitte le jeu 
         if event.type == pyg.QUIT:
@@ -77,38 +107,95 @@ while run:
             #si echap quitte le jeu
             if event.key == pyg.K_ESCAPE:
                 run  = False
-            #si espace pour terminer le tank
+            #si espace pour lancer boulette
             if event.key == pyg.K_SPACE:
-                if tank_affiche:
-                    tank_affiche = False
+                if nb_boulette > 0:
+                    boulette_affiche = True
+                    boulette_lance = True
+                    boulette_a_atteint = False
+                    nb_boulette -= 1
+        #si on clique tape le voisin -5hp
         if event.type == pyg.MOUSEBUTTONDOWN and pyg.mouse.get_pressed()[0]:
-            if peut_taper_voisin:
+            if peut_taper_voisin:  
                 degat.animate()
                 anim_degat.animate()
                 voisin.pv -= 5
+                voisin_shake_termine = False
+                voisin_shake = 7
             if not peut_taper_voisin:
                 voisin_affiche = False
                 perdu = True
-        if event.type == pyg.MOUSEBUTTONDOWN and pyg.mouse.get_pressed()[2]:
-            if peut_taper_voisin:
-                degat.animate()
-                anim_vie.animate()
-                voisin.pv += 5
             
 
-    #timer du jeu
+    
+    #affichage du fond du jeu
+    screen.blit(background, (0, 0))
+
+    #affichage du timer 
     seconds = ((pyg.time.get_ticks() - start_ticks) / 1000)
-
-    screen.fill((12,24,36))
-
+    countdown = font.render(str(round(30-seconds)), True, (255, 0, 0), (0, 255, 0))
     screen.blit(countdown, (width - 90, 100))
+
+    if munition_affiche:
+        munition.draw(screen, nb_boulette)
+
+
+    if voisin_shake:
+        if not voisin_shake_termine:
+            voisin.x += randint(0, 8) - 4
+            voisin.y += randint(0, 8) - 4
+        
+    if voisin_shake > 0:
+        voisin_shake -= 1
+
+    elif voisin_shake == 0:
+        voisin_shake_termine = True
+
+    if voisin_shake_termine:
+        voisin.x, voisin.y =  x_voisin, y_voisin
+    
 
     if prof_affiche:
         prof.draw(screen)
 
+    if boulette_affiche:
+        if not boulette_a_atteint:
+            boulette.draw(screen)
+
+    if boulette_lance:
+        if not boulette_a_atteint:
+            boulette.lance(x_prof + 100, y_prof + 200, 10)
+
+
+    if boulette.x <= x_prof + 100:
+        boulette_a_atteint = True
+        boulette_lance = False
+
+    if boulette_a_atteint:
+        prof_shake = 7 
+    
+    if boulette_a_atteint:
+        boulette.x = boulette_x
+        boulette.y = boulette_y
+        boulette_affiche = False
+        boulette_a_atteint = False
+
+
+    if prof_shake > 0:
+        prof.x += randint(0, 10) - 5   
+        prof.y += randint(0, 10) - 5
+        prof_shake -= 1
+
+    elif prof_shake == 0:
+        prof_shake_termine = True
+    
+    if prof_shake_termine:
+        prof.x, prof.y =  x_prof, y_prof
+        prof_shake_termine = False
+
     if voisin_affiche:
         voisin.draw(screen)
-        voisin.barre_de_vie(x_voisin + 150, y_voisin + 230) 
+        voisin.barre_de_vie(voisin.x + 150, voisin.y + 230) 
     
     hit_anim.draw(screen)
     hit_anim.update(0.5)
@@ -118,15 +205,15 @@ while run:
 
     plus_5_animation.draw(screen)
     plus_5_animation.update(0.40)
-
-
-    chance  = randint(1, 200)
+            
+            
+    chance  = randint(0, 250)
     if not prof_va_se_retourne:
-        if chance == 1:
-            prof_se_retourne = True
-            prof_va_se_retourne = True
-            save_seconds = seconds
-
+        if not boulette_lance:
+            if chance == 1:
+                prof_se_retourne = True
+                prof_va_se_retourne = True
+                save_seconds = seconds
 
     
     if prof_se_retourne:
@@ -138,7 +225,7 @@ while run:
             voisin_peut_gagner_vie = False
 
     if prof_se_retourne:
-        if seconds - save_seconds > 2.5:
+        if seconds - save_seconds > 1.5:
             prof.update(0)
             voisin_a_gagner_vie = False
             voisin_peut_gagner_vie = False
@@ -158,6 +245,7 @@ while run:
     if voisin_peut_gagner_vie:
         if not voisin_a_gagner_vie:
             voisin.pv += 50
+            anim_vie.animate()
             voisin_a_gagner_vie = True
             if voisin.pv > voisin.max_pv:
                 voisin.pv = voisin.max_pv

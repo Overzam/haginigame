@@ -1,0 +1,26 @@
+import pygame as pyg
+
+pyg.init()
+width, height = 1920, 1080
+screen = pyg.display.set_mode((width, height))
+
+munition_sprite = pyg.image.load('img/munition.png').convert_alpha()
+munition_sprite = pyg.transform.scale(munition_sprite, (200, 200))
+
+pos1, pos2, pos3 = 800, 1000, 1200
+
+
+class Munition:
+    def __init__(self): 
+        pass
+
+    def draw(self, screen, nb_munition):
+        if nb_munition == 3:
+            screen.blit(munition_sprite, (pos1, 900))
+            screen.blit(munition_sprite, (pos2, 900))
+            screen.blit(munition_sprite, (pos3, 900))
+        elif nb_munition == 2:
+            screen.blit(munition_sprite, (pos1, 900))
+            screen.blit(munition_sprite, (pos2, 900))
+        elif nb_munition == 1:
+            screen.blit(munition_sprite, (pos1, 900))
