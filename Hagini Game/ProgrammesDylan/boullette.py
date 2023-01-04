@@ -10,7 +10,6 @@ boulette_sprite = pyg.transform.scale(boulette_sprite, (50, 50))
 boulette_lance = False
 boulette_affiche = False
 boulette_a_atteint = False
-boulette_x, boulette_y = 960, 700
 
 
 class Boulette:
@@ -34,11 +33,4 @@ class Boulette:
                 if self.x - x_vise != 0:
                     self.y -= (self.y - y_vise) * vitesse/(self.x - x_vise)
             if self.x > x_vise:
-                self.x -= vitesse
-
-boulette = Boulette(960, 700)
-
-
-
-
-            
+                self.x -= vitesse        

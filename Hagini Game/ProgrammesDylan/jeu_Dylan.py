@@ -9,6 +9,7 @@ from win_and_loose import loose, win
 from random import randint
 from boullette import Boulette
 from munition import Munition
+from viseur import Viseur
 
 #definition de l'ecran et du titre du jeu
 width, height = 1920, 1080
@@ -32,6 +33,8 @@ prof_se_retourne = False
 prof_va_se_retourne = False
 x_prof, y_prof = 500, 300
 prof = Prof(x_prof, y_prof)
+prof_touche_mechant = False
+prof_hitbox = [[500, 300], [800, 300], [500, 800], [800, 800]]
 
 #definition des variables des munitions
 munition_affiche = True
@@ -49,9 +52,24 @@ voisin = Voisin(x_voisin, y_voisin, 350)
 boulette_lance = False
 boulette_affiche = False
 boulette_a_atteint = False
+boulette_a_touche = False
 boulette_x, boulette_y = 960, 700
 boulette = Boulette(boulette_x, boulette_y)
-nb_boulette = 3
+nb_boulette = 5
+nb_boulette_touche = 0
+
+#definition des variables du viseur
+x_viseur = 200
+y_viseur = 200
+viseur = Viseur(x_viseur, y_viseur)
+bouge_horizontal = False
+bouge_vertical = False
+bouge_droite = False
+bouge_gauche = False
+bouge_haut = False
+bouge_bas = False
+nb_touche = 0
+viseur_affiche = False
 
 #definition des variables qui determine si on a gagné ou perdu
 perdu = False
@@ -86,12 +104,6 @@ plus_5_animation = pyg.sprite.Group()
 anim_vie = plus_5(x_voisin + 120, y_voisin - 200)
 plus_5_animation.add(anim_vie)
 
-#classe pour les timings ou il faut reagir
-class Timing:
-    premier = randint(3,4)
-    deuxieme = premier + 0.5
-    troisieme = deuxieme + 2
-
 
 #debut de la boucle du jeu
 run = True
@@ -108,12 +120,35 @@ while run:
             if event.key == pyg.K_ESCAPE:
                 run  = False
             #si espace pour lancer boulette
-            if event.key == pyg.K_SPACE:
-                if nb_boulette > 0:
-                    boulette_affiche = True
-                    boulette_lance = True
-                    boulette_a_atteint = False
-                    nb_boulette -= 1
+            if not boulette_lance:
+                if event.key == pyg.K_SPACE:
+                    if nb_touche == 2:
+                        bouge_horizontal = False
+                        bouge_vertical = False
+                        bouge_droite = False
+                        bouge_gauche = False
+                        bouge_haut = False
+                        bouge_bas = False
+                        nb_touche += 1
+                    if nb_touche == 1:
+                        bouge_horizontal = False
+                        bouge_vertical = True
+                        bouge_haut = True
+                        nb_touche += 1
+                    if nb_touche == 0:
+                        viseur_affiche = True
+                        bouge_horizontal = True
+                        bouge_droite = True
+                        nb_touche += 1
+                    if nb_touche == 3:
+                        if not boulette_lance:
+                            if nb_boulette > 0:
+                                boulette_affiche = True
+                                boulette_lance = True
+                                boulette_a_atteint = False
+                                nb_boulette -= 1
+                                nb_touche = 0
+                                viseur_affiche = False
         #si on clique tape le voisin -5hp
         if event.type == pyg.MOUSEBUTTONDOWN and pyg.mouse.get_pressed()[0]:
             if peut_taper_voisin:  
@@ -136,25 +171,6 @@ while run:
     countdown = font.render(str(round(30-seconds)), True, (255, 0, 0), (0, 255, 0))
     screen.blit(countdown, (width - 90, 100))
 
-    if munition_affiche:
-        munition.draw(screen, nb_boulette)
-
-
-    if voisin_shake:
-        if not voisin_shake_termine:
-            voisin.x += randint(0, 8) - 4
-            voisin.y += randint(0, 8) - 4
-        
-    if voisin_shake > 0:
-        voisin_shake -= 1
-
-    elif voisin_shake == 0:
-        voisin_shake_termine = True
-
-    if voisin_shake_termine:
-        voisin.x, voisin.y =  x_voisin, y_voisin
-    
-
     if prof_affiche:
         prof.draw(screen)
 
@@ -164,21 +180,39 @@ while run:
 
     if boulette_lance:
         if not boulette_a_atteint:
-            boulette.lance(x_prof + 100, y_prof + 200, 10)
+            boulette.lance(viseur.x, viseur.y, 10)
 
 
-    if boulette.x <= x_prof + 100:
+    if boulette.x <= viseur.x:
         boulette_a_atteint = True
         boulette_lance = False
+        viseur.x = x_viseur
+        viseur.y = y_viseur
 
     if boulette_a_atteint:
+        if prof_hitbox[0][0] < boulette.x < prof_hitbox[1][0] and prof_hitbox[0][1] < boulette.y < prof_hitbox[3][1]:
+            boulette_a_touche = True
+            nb_boulette_touche +=1
+            
+
+    if boulette_a_touche:
         prof_shake = 7 
+        boulette_a_touche = False
     
+    
+    if prof_touche_mechant:
+        perdu = True
+
+    if nb_boulette_touche >= 3:
+        gagne = True
+
     if boulette_a_atteint:
         boulette.x = boulette_x
         boulette.y = boulette_y
         boulette_affiche = False
         boulette_a_atteint = False
+        if prof.sprite_actuel:
+            prof_touche_mechant = True
 
 
     if prof_shake > 0:
@@ -241,6 +275,63 @@ while run:
         voisin_peut_gagner_vie = True
     else:
         peut_taper_voisin = True
+
+
+
+
+
+    if viseur_affiche:
+        viseur.draw(screen)
+
+    if bouge_horizontal:
+        if bouge_droite:
+            if viseur.x < width - 1000:
+                viseur.update('droite')
+            else:
+                bouge_gauche = True
+                bouge_droite = False
+        else:
+            if viseur.x > 0:
+                viseur.update('gauche')
+            else:
+                bouge_droite = True
+                bouge_gauche = False
+    
+    if bouge_vertical:
+        if bouge_haut:
+            if viseur.y < height - 200:
+                viseur.update('bas')
+            else:
+                bouge_bas = True
+                bouge_haut = False
+        else:
+            if viseur.y > 0:
+                viseur.update('haut')
+            else:
+                bouge_haut = True
+                bouge_bas = False
+
+
+
+
+    if munition_affiche:
+        munition.draw(screen, nb_boulette)
+
+
+    if voisin_shake:
+        if not voisin_shake_termine:
+            voisin.x += randint(0, 8) - 4
+            voisin.y += randint(0, 8) - 4
+        
+    if voisin_shake > 0:
+        voisin_shake -= 1
+
+    elif voisin_shake == 0:
+        voisin_shake_termine = True
+
+    if voisin_shake_termine:
+        voisin.x, voisin.y =  x_voisin, y_voisin
+    
 
     if voisin_peut_gagner_vie:
         if not voisin_a_gagner_vie:
