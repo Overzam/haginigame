@@ -241,7 +241,7 @@ while run:
     plus_5_animation.update(0.40)
             
             
-    chance  = randint(0, 250)
+    chance  = randint(0, 100)
     if not prof_va_se_retourne:
         if not boulette_lance:
             if chance == 1:
@@ -341,10 +341,13 @@ while run:
             if voisin.pv > voisin.max_pv:
                 voisin.pv = voisin.max_pv
 
-    if voisin.pv <= 0:
-        gagne = True
-    if 30 - seconds <= 0:
-        perdu = True
+    if not perdu:
+        if voisin.pv <= 0:
+            gagne = True
+
+    if not gagne:
+        if 30 - seconds <= 0:
+            perdu = True
 
 
     if gagne:

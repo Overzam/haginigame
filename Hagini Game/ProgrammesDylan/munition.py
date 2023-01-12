@@ -4,10 +4,11 @@ pyg.init()
 width, height = 1920, 1080
 screen = pyg.display.set_mode((width, height))
 
-munition_sprite = pyg.image.load('img/munition.png').convert_alpha()
-munition_sprite = pyg.transform.scale(munition_sprite, (200, 200))
+munition_sprite = pyg.image.load('img/papier.png').convert_alpha()
+munition_sprite = pyg.transform.scale(munition_sprite, (100, 100))
 
 pos1, pos2, pos3, pos4, pos5 = 600, 800, 1000, 1200, 1400
+pos = [pos1, pos2, pos3, pos4, pos5]
 
 
 class Munition:

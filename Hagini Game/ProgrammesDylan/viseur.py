@@ -17,12 +17,12 @@ class Viseur:
         screen.blit(viseur_sprite, (self.x, self. y))
     def update(self, direction):
         if direction == 'gauche':
-            self.x -= 5
+            self.x -= 20
         elif direction == 'droite':
-            self.x += 5
+            self.x += 20
         if direction == 'haut':
-            self.y -= 5
+            self.y -= 20
         elif direction == 'bas':
-            self.y += 5
+            self.y += 20
                 
     pyg.display.flip()
