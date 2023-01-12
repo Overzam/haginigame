@@ -5,7 +5,6 @@ from class_prof import Prof
 from voisin import Voisin
 from moins_5_animation import moins_5
 from plus_5_animation import plus_5
-from win_and_loose import loose, win
 from random import randint
 from boullette import Boulette
 from munition import Munition
@@ -35,6 +34,8 @@ x_prof, y_prof = 500, 300
 prof = Prof(x_prof, y_prof)
 prof_touche_mechant = False
 prof_hitbox = [[500, 300], [800, 300], [500, 800], [800, 800]]
+prof_enorme = pyg.image.load('img/prof_mechant.png')
+prof_enorme = pyg.transform.scale(prof_enorme, (5000, 5000))
 
 #definition des variables des munitions
 munition_affiche = True
@@ -103,6 +104,41 @@ moins_5_animation.add(anim_degat)
 plus_5_animation = pyg.sprite.Group()
 anim_vie = plus_5(x_voisin + 120, y_voisin - 200)
 plus_5_animation.add(anim_vie)
+
+
+#definbition de la victoire ou defaite
+
+font = pyg.font.Font('freesansbold.ttf', 64)
+txt_perdant = "BOO la  honte 😹😹"
+txt_gagnant = "Squid game 🔥🔥"
+bleu = (255,255,0)
+rouge = (100, 200, 0)
+
+def loose():
+    fin = True
+    while fin:
+        for event in pyg.event.get():
+        #terminer la boucle quand le joueur quitte le jeu 
+            if event.type == pyg.QUIT:
+                fin  = False
+            #si une touche est pressé
+            if event.type == pyg.KEYDOWN:
+                #si echap quitte le jeu
+                if event.key == pyg.K_ESCAPE:
+                    fin  = False        
+        screen.fill((0, 0, 0))
+        screen.blit(prof_enorme, (0, 0))
+        afficher_texte_perdant = font.render(str(txt_perdant), True, bleu, rouge)
+        screen.blit(afficher_texte_perdant, (width//3, height//3))
+        pyg.display.flip()
+
+
+def win():
+    screen.fill((0,0,0))
+    afficher_texte_gagnant = font.render(str(txt_gagnant), True, bleu, rouge)
+    screen.blit(afficher_texte_gagnant, (width//3, height//3))
+    pyg.display.flip()
+
 
 
 #debut de la boucle du jeu
@@ -181,6 +217,10 @@ while run:
     if boulette_lance:
         if not boulette_a_atteint:
             boulette.lance(viseur.x, viseur.y, 10)
+
+    if prof.sprite_actuel == 2:
+        if boulette_lance:
+            perdu = True
 
 
     if boulette.x <= viseur.x:
@@ -354,6 +394,7 @@ while run:
         win()
     if perdu:
         loose()
+        run = False
 
     #actualiser l'affichage du jeu
     pyg.display.flip()

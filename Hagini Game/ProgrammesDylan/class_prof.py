@@ -8,15 +8,14 @@ pyg.init()
 
 #definition des images
 prof_gentil = pyg.image.load('img/prof_gentil.png').convert_alpha()
-prof_moitie =pyg.image.load('img/prof_moitie.png').convert_alpha()
+prof_moitie = pyg.image.load('img/prof_moitie.png').convert_alpha()
 prof_mechant = pyg.image.load('img/prof_mechant.png').convert_alpha()
 
 prof_gentil = pyg.transform.scale(prof_gentil, (300, 500))
 prof_moitie =pyg.transform.scale(prof_moitie, (300, 500))
 prof_mechant = pyg.transform.scale(prof_mechant, (500, 500))
-prof_touche = prof_mechant
 
-etat_prof = [prof_gentil, prof_moitie, prof_mechant, prof_touche]
+etat_prof = [prof_gentil, prof_moitie, prof_mechant]
 
 
 
