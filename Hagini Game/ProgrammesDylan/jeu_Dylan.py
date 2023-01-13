@@ -92,30 +92,17 @@ voisin_shake_termine = False
 prof_shake = 0
 prof_shake_termine = False
 
-#definition des variables pour animer l'animation de degat, de +5 et -5
-hit_anim = pyg.sprite.Group()
-degat = hit(x_voisin - 150, y_voisin - 100)
-hit_anim.add(degat)
-
-moins_5_animation = pyg.sprite.Group()
-anim_degat = moins_5(x_voisin + 120, y_voisin - 200)
-moins_5_animation.add(anim_degat)
-
-plus_5_animation = pyg.sprite.Group()
-anim_vie = plus_5(x_voisin + 120, y_voisin - 200)
-plus_5_animation.add(anim_vie)
 
 
 #definbition de la victoire ou defaite
-
 font = pyg.font.Font('freesansbold.ttf', 64)
-txt_perdant = "BOO la  honte 😹😹"
-txt_gagnant = "Squid game 🔥🔥"
 bleu = (255,255,0)
 rouge = (100, 200, 0)
 
 def loose():
     fin = True
+    attend = True
+    prof.sprite_actuel = 2
     while fin:
         for event in pyg.event.get():
         #terminer la boucle quand le joueur quitte le jeu 
@@ -126,18 +113,31 @@ def loose():
                 #si echap quitte le jeu
                 if event.key == pyg.K_ESCAPE:
                     fin  = False        
-        screen.fill((0, 0, 0))
-        screen.blit(prof_enorme, (0, 0))
-        afficher_texte_perdant = font.render(str(txt_perdant), True, bleu, rouge)
-        screen.blit(afficher_texte_perdant, (width//3, height//3))
+        screen.blit(background, (0, 0))
+        prof.draw(screen)
+        if attend:
+            pyg.time.delay(3000)
+        attend = False
+        prof.update(1)
         pyg.display.flip()
 
 
 def win():
-    screen.fill((0,0,0))
-    afficher_texte_gagnant = font.render(str(txt_gagnant), True, bleu, rouge)
-    screen.blit(afficher_texte_gagnant, (width//3, height//3))
-    pyg.display.flip()
+    fin = True
+    while fin:
+        for event in pyg.event.get():
+        #terminer la boucle quand le joueur quitte le jeu 
+            if event.type == pyg.QUIT:
+                fin  = False
+            #si une touche est pressé
+            if event.type == pyg.KEYDOWN:
+                #si echap quitte le jeu
+                if event.key == pyg.K_ESCAPE:
+                    fin  = False   
+        screen.blit(background, (0, 0))
+        prof.sprite_actuel = 2
+        prof.draw(screen)
+        pyg.display.flip()
 
 
 
@@ -237,6 +237,8 @@ while run:
 
     if boulette_a_touche:
         prof_shake = 7 
+        degat.animate()
+        anim_degat.animate()
         boulette_a_touche = False
     
     
@@ -393,6 +395,7 @@ while run:
     if gagne:
         win()
     if perdu:
+        prof.sprite_actuel = 2
         loose()
         run = False
 

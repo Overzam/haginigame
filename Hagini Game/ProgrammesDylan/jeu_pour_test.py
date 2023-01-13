@@ -1,7 +1,7 @@
 import pygame as pyg, sys
 
 
-width, height = 500, 500
+width, height = 1920, 1080
 titre = "Jeu Dylan"
 
 pyg.init()
@@ -9,7 +9,7 @@ screen = pyg.display.set_mode((width, height))
 pyg.display.set_caption(titre)
 clock = pyg.time.Clock()
 
-tank = pyg.image.load('img/voisin.png').convert_alpha()
+tank = pyg.image.load('img/papier.png').convert_alpha()
 tank = pyg.transform.scale(tank,(500,500))
 
 
@@ -25,7 +25,7 @@ class Player:
         self.right_pressed = False
         self.down_pressed = False
         self.left_pressed = False
-        self.speed = 4
+        self.speed = 10
 
     def draw(self, screen):
         screen.blit(tank, (self.x, self.y))

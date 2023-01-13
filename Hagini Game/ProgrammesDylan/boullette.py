@@ -25,12 +25,12 @@ class Boulette:
         if distance_max == x_vise:
             if self.x > x_vise:
                 if self.y - y_vise != 0:
-                    self.x -= (self.x - x_vise) * vitesse /(self.y - y_vise)
+                    self.x -= (self.x - x_vise) * vitesse /(self.y - y_vise) *1.5
             if self.y > y_vise:
                 self.y -= vitesse
         else:
             if self.x > x_vise:
                 if self.x - x_vise != 0:
-                    self.y -= (self.y - y_vise) * vitesse/(self.x - x_vise)
+                    self.y -= (self.y - y_vise) * vitesse/(self.x - x_vise) *1.5
             if self.x > x_vise:
                 self.x -= vitesse        
