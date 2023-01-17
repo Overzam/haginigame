@@ -60,6 +60,8 @@ taupe_droite = (trou_droite_x + 20,trou_droite_y + 20,40,40)
 taupe_gauche = (trou_gauche_x + 20, trou_gauche_y + 20, 40, 40)
 taupe_bas = (trou_bas_x + 20, trou_bas_y + 20,40,40)
 
+var_sortie = 0
+
 while True:
     screen.fill((0,0,0))
     
@@ -77,7 +79,18 @@ while True:
 
     # généré une nouvelle valeur, un nouveau carré
     if bout_OK == 1:
+
+        prev_var_sortie = var_sortie
         var_sortie = random.randrange(1, 5, 1)
+
+        if var_sortie == 1 and prev_var_sortie == 1:
+            var_sortie += 1
+        if var_sortie == 2 and prev_var_sortie == 2:
+            var_sortie += 1
+        if var_sortie == 3 and prev_var_sortie == 3:
+            var_sortie += 1
+        if var_sortie == 4 and prev_var_sortie == 4:
+            var_sortie -= 1
 
         # applique la carré au bon endroit
         if var_sortie == 1:
