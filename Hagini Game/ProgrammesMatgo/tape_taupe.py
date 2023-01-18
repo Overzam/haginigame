@@ -5,6 +5,7 @@ import random
 
 from pygame import *
 pyg.init()
+pyg.font.init()
 pyg.display.set_caption('whack-a-mole')
 
 width = 1920
@@ -41,9 +42,15 @@ points = 0
 
 game_start = 0
 
-timer_de_fin = 2000
+timer_de_fin = 1900
+temps = 0
 
 viseur = pyg.image.load('viseur.png')
+
+marteau_normal = pyg.image.load('marteau45.png')
+marteau_frappe = pyg.image.load("marteau90.png")
+
+marteau = marteau_normal
 
 trou_haut_x = width/2.04
 trou_haut_y = height/2.59
@@ -83,8 +90,17 @@ taupe_mid = (trou_haut_x + 20, trou_droite_y + 20,40,40)
 
 var_sortie = 0
 
-while True:
+offset_marteau_x = 0
+offset_marteau_y = -130
+
+font = pyg.font.Font('Monocraft.otf', 100)
+
+Run = True
+
+while Run:
     screen.fill((0,0,0))
+
+    aff_points = font.render(str(points), True, (255, 255, 255))
     
     pyg.mouse.set_visible(False)
     
@@ -92,6 +108,12 @@ while True:
     pos_viseur = list(pos_souris)
     pos_viseur[0] -= 50
     pos_viseur[1] -= 50
+
+    pos_marteau = list(pos_souris)
+    pos_marteau[1] = pos_souris[1] + offset_marteau_y
+    pos_marteau[0] = pos_souris[0] + offset_marteau_x
+
+    screen.blit(aff_points,(30,10))
 
     pyg.draw.rect(screen, (255, 0, 0), trou_haut, 1)
     pyg.draw.rect(screen, (255, 0, 0), trou_gauche, 1)
@@ -104,6 +126,52 @@ while True:
     pyg.draw.rect(screen, (255, 0, 0), trou_BD, 1)
     
     pyg.draw.rect(screen, (255, 0, 0), trou_mid, 1)
+
+    if timer_de_fin == 1900:
+        temps = 20
+    if timer_de_fin < 1900 and timer_de_fin > 1800:
+        temps = 19
+    if timer_de_fin < 1800 and timer_de_fin > 1700:
+        temps = 18
+    if timer_de_fin < 1700 and timer_de_fin > 1600:
+        temps = 17
+    if timer_de_fin < 1600 and timer_de_fin > 1500:
+        temps = 16
+    if timer_de_fin < 1500 and timer_de_fin > 1400:
+        temps = 15
+    if timer_de_fin < 1400 and timer_de_fin > 1300:
+        temps = 14
+    if timer_de_fin < 1300 and timer_de_fin > 1200:
+        temps = 13
+    if timer_de_fin < 1200 and timer_de_fin > 1100:
+        temps = 12
+    if timer_de_fin < 1100 and timer_de_fin > 1000:
+        temps = 11
+    if timer_de_fin < 1000 and timer_de_fin > 900:
+        temps = 10
+    if timer_de_fin < 900 and timer_de_fin > 800:
+        temps = 9
+    if timer_de_fin < 800 and timer_de_fin > 700:
+        temps = 8
+    if timer_de_fin < 700 and timer_de_fin > 600:
+        temps = 7
+    if timer_de_fin < 600 and timer_de_fin > 500:
+        temps = 6
+    if timer_de_fin < 500 and timer_de_fin > 400:
+        temps = 5
+    if timer_de_fin < 400 and timer_de_fin > 300:
+        temps = 4
+    if timer_de_fin < 300 and timer_de_fin > 200:
+        temps = 3
+    if timer_de_fin < 200 and timer_de_fin > 100:
+        temps = 2
+    if timer_de_fin < 100 and timer_de_fin > 0:
+        temps = 1
+    if timer_de_fin == 0:
+        temps = 0
+
+    aff_temps = font.render(str(temps), True, (255, 255, 255))
+    screen.blit(aff_temps,(1700,20))
 
     # généré une nouvelle valeur, un nouveau carré
     if bout_OK == 1:
@@ -212,7 +280,7 @@ while True:
     if points < 0:
         points = 0
 
-    print(points)
+    #print(points)
     # victoire a 50 points
     if points == 50:
         print("victoire")
@@ -227,7 +295,7 @@ while True:
             pyg.quit()
             sys.exit()
 
-    print(timer_de_fin)
+    #print(timer_de_fin)
     
     for event in pyg.event.get():
 
@@ -241,9 +309,16 @@ while True:
 
         if event.type == pyg.MOUSEBUTTONDOWN:
 
+            marteau = marteau_frappe
+            offset_marteau_x = - 60
+            offset_marteau_y = - 180
+            pos_marteau = list(pos_souris)
+            pos_marteau[1] = pos_souris[1] + offset_marteau_y
+            pos_marteau[0] = pos_souris[0] + offset_marteau_x
+
             # bas ( genere une nouvelle valeur, change la couleur, reset le timer, +1 point )
             if pyg.Rect.collidepoint(trou_bas, pos_souris):
-                print("ratio")
+                #print("ratio")
                 # vérifie si le bouton appyuer est le bon
                 if bas == 1:
                     bout_OK = 1
@@ -358,12 +433,22 @@ while True:
                 else:
                     points -= 1
                     BD = 0
+
+        if event.type == MOUSEBUTTONUP:
+            marteau = marteau_normal
+            offset_marteau_x = 0
+            offset_marteau_y = - 130
+            pos_marteau = list(pos_souris)
+            pos_marteau[1] = pos_souris[1] + offset_marteau_y
+            pos_marteau[0] = pos_souris[0] + offset_marteau_x
+
         # fermer le jeu
         if event.type == QUIT:
             pyg.quit()
             sys.exit()
 
     screen.blit(viseur, pos_viseur) #affiche le viseur
+    screen.blit(marteau, pos_marteau) #affiche le marteau
 
     pyg.display.update()
     clock.tick(60)
