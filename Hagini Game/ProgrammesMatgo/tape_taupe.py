@@ -90,8 +90,8 @@ taupe_mid = (trou_haut_x + 20, trou_droite_y + 20,40,40)
 
 var_sortie = 0
 
-offset_marteau_x = 0
-offset_marteau_y = -130
+offset_marteau_x = -70
+offset_marteau_y = -160
 
 font = pyg.font.Font('Monocraft.otf', 100)
 
@@ -310,7 +310,7 @@ while Run:
         if event.type == pyg.MOUSEBUTTONDOWN:
 
             marteau = marteau_frappe
-            offset_marteau_x = - 60
+            offset_marteau_x = - 118
             offset_marteau_y = - 180
             pos_marteau = list(pos_souris)
             pos_marteau[1] = pos_souris[1] + offset_marteau_y
@@ -436,8 +436,8 @@ while Run:
 
         if event.type == MOUSEBUTTONUP:
             marteau = marteau_normal
-            offset_marteau_x = 0
-            offset_marteau_y = - 130
+            offset_marteau_x = -60
+            offset_marteau_y = - 160
             pos_marteau = list(pos_souris)
             pos_marteau[1] = pos_souris[1] + offset_marteau_y
             pos_marteau[0] = pos_souris[0] + offset_marteau_x
