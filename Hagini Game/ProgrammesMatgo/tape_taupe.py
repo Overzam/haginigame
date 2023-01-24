@@ -35,15 +35,9 @@ mid = 0
 
 color_switch = 0
 
-secondes = 75 # temps pour taper les taupes
-s = secondes
-
 points = 0
 
 game_start = 0
-
-timer_de_fin = 1900
-temps = 0
 
 viseur = pyg.image.load('viseur.png')
 
@@ -52,41 +46,20 @@ marteau_frappe = pyg.image.load("marteau90.png")
 
 marteau = marteau_normal
 
-trou_haut_x = width/2.04
-trou_haut_y = height/2.59
+facile = pyg.image.load('facile.png')
+difficile = pyg.image.load('difficile.png')
 
-trou_droite_x = width/1.826
+trou_haut_x = width/2.04
+trou_haut_y = height/3.4
+
+trou_droite_x = width/3
 trou_droite_y = height/2.05
 
-trou_gauche_x = width/2.32
+trou_gauche_x = width/1.5
 trou_gauche_y = height/2.05
 
 trou_bas_x = width/2.04
-trou_bas_y = height/1.69
-
-trou_haut = Rect(trou_haut_x, trou_haut_y, 80, 80)
-trou_droite = Rect(trou_droite_x,trou_droite_y, 80, 80)
-trou_gauche = Rect(trou_gauche_x, trou_gauche_y, 80, 80)
-trou_bas = Rect(trou_bas_x, trou_bas_y, 80, 80)
-
-trou_HG = Rect(trou_gauche_x, trou_haut_y, 80, 80)
-trou_HD = Rect(trou_droite_x, trou_haut_y, 80, 80)
-trou_BG = Rect(trou_gauche_x, trou_bas_y, 80, 80)
-trou_BD = Rect(trou_droite_x, trou_bas_y, 80, 80)
-
-trou_mid = Rect(trou_haut_x,trou_droite_y, 80, 80)
-
-taupe_haut = (trou_haut_x + 20, trou_haut_y + 20,40,40)
-taupe_droite = (trou_droite_x + 20,trou_droite_y + 20,40,40)
-taupe_gauche = (trou_gauche_x + 20, trou_gauche_y + 20, 40, 40)
-taupe_bas = (trou_bas_x + 20, trou_bas_y + 20,40,40)
-
-taupe_HG = (trou_gauche_x + 20, trou_haut_y + 20,40,40)
-taupe_HD = (trou_droite_x + 20, trou_haut_y + 20,40,40)
-taupe_BG = (trou_gauche_x + 20, trou_bas_y + 20,40,40)
-taupe_BD = (trou_droite_x + 20, trou_bas_y + 20,40,40)
-
-taupe_mid = (trou_haut_x + 20, trou_droite_y + 20,40,40)
+trou_bas_y = height/1.5
 
 var_sortie = 0
 
@@ -95,7 +68,91 @@ offset_marteau_y = -160
 
 font = pyg.font.Font('Monocraft.otf', 100)
 
-Run = True
+facile_coll = Rect(100,300,800,400)
+difficile_coll = Rect(1000,300,800,400)
+
+victoire = pyg.image.load('win.png')
+defaite = pyg.image.load('defaite.png')
+
+Run_menu = True
+Run = False
+Run_fin = False
+
+while Run_menu:
+    
+    screen.fill((0,0,0))
+    
+    pos_souris = pyg.mouse.get_pos()
+    
+    screen.blit(facile, (100,300))
+    screen.blit(difficile, (1000, 300))
+
+    pyg.draw.rect(screen, (255, 0, 0), facile_coll, -1)
+    pyg.draw.rect(screen, (255, 0, 0), facile_coll, -1)
+    
+    for event in pyg.event.get():
+        
+        if event.type == QUIT:
+            pyg.quit()
+            sys.exit()
+        
+        if event.type == MOUSEBUTTONDOWN:
+            if pyg.Rect.collidepoint(facile_coll, pos_souris): #mode facile
+
+                secondes = 100000  # temps pour taper les taupes
+                s = secondes
+                timer_de_fin = 5100
+                temps = 50
+
+                taille_trou = 160
+                taille_taupe = 120
+
+                points_pour_win = 25
+
+                Run_menu = False
+                Run = True
+
+            if pyg.Rect.collidepoint(difficile_coll, pos_souris): # mode difficile
+
+                secondes = 75  # temps pour taper les taupes
+                s = secondes
+                timer_de_fin = 2100
+                temps = 20
+
+                taille_trou = 80
+                taille_taupe = 40
+
+                points_pour_win = 50
+
+                Run_menu = False
+                Run = True
+
+    pyg.display.update()
+    clock.tick(60)
+
+trou_haut = Rect(trou_haut_x, trou_haut_y, taille_trou, taille_trou)
+trou_droite = Rect(trou_droite_x,trou_droite_y, taille_trou, taille_trou)
+trou_gauche = Rect(trou_gauche_x, trou_gauche_y, taille_trou, taille_trou)
+trou_bas = Rect(trou_bas_x, trou_bas_y, taille_trou, taille_trou)
+
+trou_HG = Rect(trou_gauche_x, trou_haut_y, taille_trou, taille_trou)
+trou_HD = Rect(trou_droite_x, trou_haut_y, taille_trou, taille_trou)
+trou_BG = Rect(trou_gauche_x, trou_bas_y, taille_trou, taille_trou)
+trou_BD = Rect(trou_droite_x, trou_bas_y, taille_trou, taille_trou)
+
+trou_mid = Rect(trou_haut_x,trou_droite_y, taille_trou, taille_trou)
+
+taupe_haut = (trou_haut_x + 20, trou_haut_y + 20,taille_taupe,taille_taupe)
+taupe_droite = (trou_droite_x + 20,trou_droite_y + 20,taille_taupe,taille_taupe)
+taupe_gauche = (trou_gauche_x + 20, trou_gauche_y + 20, taille_taupe, taille_taupe)
+taupe_bas = (trou_bas_x + 20, trou_bas_y + 20,taille_taupe,taille_taupe)
+
+taupe_HG = (trou_gauche_x + 20, trou_haut_y + 20,taille_taupe,taille_taupe)
+taupe_HD = (trou_droite_x + 20, trou_haut_y + 20,taille_taupe,taille_taupe)
+taupe_BG = (trou_gauche_x + 20, trou_bas_y + 20,taille_taupe,taille_taupe)
+taupe_BD = (trou_droite_x + 20, trou_bas_y + 20,taille_taupe,taille_taupe)
+
+taupe_mid = (trou_haut_x + 20, trou_droite_y + 20,taille_taupe,taille_taupe)
 
 while Run:
     screen.fill((0,0,0))
@@ -127,48 +184,8 @@ while Run:
     
     pyg.draw.rect(screen, (255, 0, 0), trou_mid, 1)
 
-    if timer_de_fin == 1900:
-        temps = 20
-    if timer_de_fin < 1900 and timer_de_fin > 1800:
-        temps = 19
-    if timer_de_fin < 1800 and timer_de_fin > 1700:
-        temps = 18
-    if timer_de_fin < 1700 and timer_de_fin > 1600:
-        temps = 17
-    if timer_de_fin < 1600 and timer_de_fin > 1500:
-        temps = 16
-    if timer_de_fin < 1500 and timer_de_fin > 1400:
-        temps = 15
-    if timer_de_fin < 1400 and timer_de_fin > 1300:
-        temps = 14
-    if timer_de_fin < 1300 and timer_de_fin > 1200:
-        temps = 13
-    if timer_de_fin < 1200 and timer_de_fin > 1100:
-        temps = 12
-    if timer_de_fin < 1100 and timer_de_fin > 1000:
-        temps = 11
-    if timer_de_fin < 1000 and timer_de_fin > 900:
-        temps = 10
-    if timer_de_fin < 900 and timer_de_fin > 800:
-        temps = 9
-    if timer_de_fin < 800 and timer_de_fin > 700:
-        temps = 8
-    if timer_de_fin < 700 and timer_de_fin > 600:
-        temps = 7
-    if timer_de_fin < 600 and timer_de_fin > 500:
-        temps = 6
-    if timer_de_fin < 500 and timer_de_fin > 400:
-        temps = 5
-    if timer_de_fin < 400 and timer_de_fin > 300:
-        temps = 4
-    if timer_de_fin < 300 and timer_de_fin > 200:
-        temps = 3
-    if timer_de_fin < 200 and timer_de_fin > 100:
-        temps = 2
-    if timer_de_fin < 100 and timer_de_fin > 0:
-        temps = 1
-    if timer_de_fin == 0:
-        temps = 0
+    if timer_de_fin == temps * 100:
+        temps -= 1
 
     aff_temps = font.render(str(temps), True, (255, 255, 255))
     screen.blit(aff_temps,(1700,20))
@@ -282,18 +299,18 @@ while Run:
 
     #print(points)
     # victoire a 50 points
-    if points == 50:
+    if points == points_pour_win:
         print("victoire")
-        pyg.quit()
-        sys.exit()
+        Run = False
+        Run_fin = True
 
     if game_start == 1:
         if timer_de_fin > 0:
             timer_de_fin -= 1
         else:
             print("défaite")
-            pyg.quit()
-            sys.exit()
+            Run = False
+            Run_fin = True
 
     #print(timer_de_fin)
     
@@ -310,6 +327,7 @@ while Run:
         if event.type == pyg.MOUSEBUTTONDOWN:
 
             marteau = marteau_frappe
+            
             offset_marteau_x = - 118
             offset_marteau_y = - 180
             pos_marteau = list(pos_souris)
@@ -449,6 +467,28 @@ while Run:
 
     screen.blit(viseur, pos_viseur) #affiche le viseur
     screen.blit(marteau, pos_marteau) #affiche le marteau
+
+    pyg.display.update()
+    clock.tick(60)
+
+while Run_fin:
+
+    screen.fill((0, 0, 0))
+
+    if points == points_pour_win:
+        screen.blit(victoire, (50, 50))
+    else:
+        screen.blit(defaite, (50, 50))
+
+    for event in pyg.event.get():
+
+        if event.type == QUIT:
+            pyg.quit()
+            sys.exit()
+
+        if event.type == MOUSEBUTTONDOWN:
+            pyg.quit()
+            sys.exit()
 
     pyg.display.update()
     clock.tick(60)
