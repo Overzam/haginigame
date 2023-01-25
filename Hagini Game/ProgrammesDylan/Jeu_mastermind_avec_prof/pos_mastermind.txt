@@ -1,0 +1,21 @@
+taille carré = 31, 31
+ecart_horizontal = 94
+ecart_vertical = 62
+	   case1:	 		 case2:			case3:			case4:
+ligne 9:   		(907, 303)							(1032, 303)
+
+ligne 8:										(1032, 365)
+
+ligne 7:										(1032, 427)
+
+ligne 6:										(1032, 489)
+
+ligne 5:										(1032, 551)
+
+ligne 4:				   	   (1001,613)	  		(1032, 613)
+
+ligne 3:
+
+ligne 2:
+
+ligne 1:
