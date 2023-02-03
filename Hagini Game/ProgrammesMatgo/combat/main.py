@@ -15,6 +15,7 @@ jeu vidéo : FightinGODS
 import pygame
 import math
 import time
+import random
 
 pygame.init()
 
@@ -30,6 +31,10 @@ Fond_Round = pygame.image.load("Assets/IMG-0704.PNG")
 Fond_Commande = pygame.image.load("Assets/Mvt-Joueur-.png")
 Fond_instru = pygame.image.load("Assets/instru1.png")
 Fond_erreur = pygame.image.load("Assets/solomode.png")
+
+fleche = pygame.image.load("Assets/fleche.png")
+
+moment_move = 0
 
 
 def countdown(num_of_secs):
@@ -151,9 +156,6 @@ def Fond_commande():
 
 def Fond_d_option():
     screen.blit(OptionFond, (0, 0))
-
-
-'''selection'''
 
 backgroundPS = pygame.image.load("Assets/IMG-0705.PNG")
 
@@ -536,7 +538,7 @@ def Fin_troisieme_perso_defaite():
 '''Jeu'''
 
 running = True
-PageAccueil = False
+PageAccueil = True
 Option = False
 Commande = False
 Instru = False
@@ -548,7 +550,7 @@ selecROUND = False
 Fin_de_combat = False
 dead = False
 Combat = False
-selecCombat = True ##############################
+selecCombat = False
 COMBAT = False
 selecCOMBAT = False
 ROUND = False
@@ -563,7 +565,7 @@ victoire_deuxieme_personnage = 0
 Fond = 1
 
 while running:
-    '''
+
     while PageAccueil:
         FondAccueil()
         optionButton()
@@ -624,9 +626,6 @@ while running:
                 selecP = False
                 running = False
 
-
-                
-                
     while selecD:
         background_Deuxieme_Selection()
         premierPersonnage()
@@ -682,7 +681,6 @@ while running:
             if event.type == pygame.QUIT:
                 selecROUND = False
                 running = False
-    '''
 
     while Option:
         FondCommande()
@@ -700,10 +698,7 @@ while running:
             if event.type == pygame.QUIT:
                 Option = False
                 running = False
-                
-        
 
-                
     while Commande:
         FondTru()
         optionButton()
@@ -716,10 +711,7 @@ while running:
             if event.type == pygame.QUIT:
                 Commande = False
                 running = False
-                
 
-    
-    '''
     while selectionP:
         background_Premiere_Selection()
         premierPersonnage()
@@ -801,10 +793,9 @@ while running:
                 ROUND = False
                 running = False
 
-    '''
-    
-    
-    
+
+
+
     while selecCombat:
         # generer le jeu
         game = Game()
@@ -826,6 +817,25 @@ while running:
                 backgroundCPremier()
             else:
                 backgroundCDeuxieme()
+
+            screen.blit(fleche, (game.playerII.rect.x + 55, game.playerII.rect.y - 10))
+
+            g_or_d = random.randint(1,2)
+            if g_or_d == 1:
+                move = random.randint(1,5)
+                for i in range(move):
+                    if game.player.rect.x == 1:
+                        game.player.rect.x = 1
+                    game.player.rect.x -= 1
+                    game.player.move_left()
+            if g_or_d == 2:
+                move = random.randint(1,5)
+                for i in range(move):
+                    if game.player.rect.x == 1:
+                        game.player.rect.x = 1
+                    game.player.rect.x += 1
+                    game.player.move_right()
+
 
             if deuxieme_personnage == 1:
                 personnage_de_droite_garde = pygame.image.load("Assets/1r/1r.png")
@@ -866,7 +876,7 @@ while running:
 
 
             # joueur2 -> gauche ou droite
-            if game.pressed.get(pygame.K_k) and game.playerII.rect.x > 0:
+            if game.pressed.get(pygame.K_q) and game.playerII.rect.x > 0:
                 p1 = game.player.rect.x
                 p2 = game.playerII.rect.x
 
@@ -876,12 +886,20 @@ while running:
                     game.playerII.rect.x = game.playerII.rect.x - 1
                     game.playerII.move_left()
                 if p1 > (p2 - ECART):
-                    time.sleep(0.5)
+                    moment_move += 1
+                    #time.sleep(0.5)
                     if (n % 2) == 0:
+                        ran_move = random.randint(1,25)
+                        for i in range(ran_move):
+                            game.player.rect.x -= 1
+                            game.player.move_left()
+                        '''
                         for i in range(25):
                             game.player.rect.x -= 1
                             game.player.move_left()
+                        '''
                         n +=1
+                    '''
                     else:
                         p1 = game.player.rect.x
                         p2 = game.playerII.rect.x
@@ -892,7 +910,7 @@ while running:
                         elif premier_personnage == 3:
                             screen.blit(pygame.image.load("Assets/3/3coup.png"), game.player.rect)
                         if p2 - p1 <= ECART2:
-                            if game.pressed.get(pygame.K_i):
+                            if game.pressed.get(pygame.K_a):
                                 playerII.health -= 0.1
                                 player.exp -= 1.5
                                 if player.exp <= 10 and player.exp >= 0:
@@ -906,6 +924,7 @@ while running:
                                             playerII.health -= 1
                                 elif player.exp < 0:
                                     player.exp = 100
+                            
                             else:
                                 playerII.health -= 1.5
                                 player.exp -= 2
@@ -920,7 +939,8 @@ while running:
                                             playerII.health -= 2
                                 elif player.exp < 0:
                                     player.exp = 100
-                        n += 1
+                            '''
+                        #n += 1
                 if p1 < 1:
                      game.player.rect.x = 0
 
@@ -933,17 +953,19 @@ while running:
                 print('n:')
                 print(n)
 
-            elif game.pressed.get(pygame.K_m) and game.playerII.rect.x + game.playerII.rect.width < screen.get_width():
+            elif game.pressed.get(pygame.K_d) and game.playerII.rect.x + game.playerII.rect.width < screen.get_width():
                 game.playerII.move_right()
                 p1 = game.player.rect.x
                 p2 = game.playerII.rect.x
                 if p1 < (p2 - 100):
-                    time.sleep(0.5)
+                    #time.sleep(0.5)
                     if (n % 2) == 0:
+                        '''
                         for i in range(25):
                             game.player.rect.x += 1
                             game.player.move_right()
                         n += 1
+                        '''
                     else:
                         game.player.rect.x += 0
                         n+= 1
@@ -959,7 +981,7 @@ while running:
                 print(game.playerII.rect.x)
 
             #main
-            elif game.pressed.get(pygame.K_o):
+            elif game.pressed.get(pygame.K_z):
                 p1 = game.player.rect.x
                 p2 = game.playerII.rect.x
                 if deuxieme_personnage == 1:
@@ -999,6 +1021,7 @@ while running:
                         elif playerII.exp < 0:
                             playerII.exp = 100
                         n += 1
+                '''
                 if p2 - p1 <= ECART and (n % 2) == 0:
                     p1 = game.player.rect.x
                     p2 = game.playerII.rect.x
@@ -1037,16 +1060,7 @@ while running:
                         elif player.exp < 0:
                             player.exp = 100
                     n += 1
-
-                    
-
-
-
-
-
-                '''if p2 - p1 <= ECART2:
-                    player.health = player.health - 10'''
-
+                '''
 
             if player.health <= 0:
                 victoire_deuxieme_personnage += 1
@@ -1075,6 +1089,7 @@ while running:
                     game.pressed[event.key] = True
                 elif event.type == pygame.KEYUP:
                     game.pressed[event.key] = False
+
 
     while dead:
         FondAccueil()
