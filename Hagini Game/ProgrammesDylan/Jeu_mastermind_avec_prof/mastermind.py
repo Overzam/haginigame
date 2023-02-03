@@ -16,7 +16,6 @@ def config_aleatoire():
         couleur.remove(config[i])
     return config
 config = config_aleatoire()
-print(config)
 
 def joueur_choisi():
     choix_du_joueur = input("entre ta config ").split(" ")
