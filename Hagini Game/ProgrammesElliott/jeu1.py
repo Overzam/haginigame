@@ -2,6 +2,9 @@ from win32api import GetSystemMetrics
 import pygame as pyg
 import sys
 
+global width
+global height
+
 # Initialisation de pygame
 pyg.init()
     
@@ -23,7 +26,8 @@ class Button:
         self.item_hitbox = item_image.get_rect()    # Boîte de collision du sprite
         self.hover = False                          # Variable booléenne vraie si la souris est sur la cellule du bouton
         self.clicked = False                        # Variable booléenne vraie si le joueur à effectué un clic gauche sur la cellule
-    
+        self.statelist = [0, 0]                     # Initialisation de la liste d'état du bouton
+
     # Méthode d'affichage du bouton
     def draw(self):
         self.item_hitbox.center = self.hitbox.center                            # On replace le sprite au centre de la cellule
@@ -40,6 +44,12 @@ class Button:
             return (self.hover, self.clicked)       # Retourne le tuple d'état du bouton, soit (True, False): souris sur le bouton, soit (True, True): souris sur le bouton et le clic gauche est pressé
         return (False, False)                       # Si la souris n'est pas sur le bouton, retourne ce tuple d'état
     
+    # Actualisation de a liste d'état du bouton
+    def update_statelist(self):
+        # La liste d'état se trouve sous la forme [état à l'instant t-1, état à l'instant t], de sorte qu'on mettra à jour l'image d'un bouton que si les deux états sont différents, c'est-à-dire que si le joueur à intéragit avec le bouton
+        # Un état à un instant t se traduit lui-même par un tuple (bouton.hover, bouton.clicked), obtenu avec la méthode which_state()
+        self.statelist = [self.statelist[1], self.which_state()]
+    
     # Méthode mettant à jour un bouton (sa cellule et le sprite)
     def update(self, buttonspritelist, spritelist):
         if self.which_state()[0]:
@@ -54,20 +64,93 @@ class Button:
             self.item_image = spritelist[0]
         self.draw()                                 # Affiche le bouton une fois ses sprites actualisés en fonction de son état
 
-# Fonction mettant à jour les sprites à l'intérieur des cellules du menu
-def update_all(buttonlist, spritelist, indicelist):
-    if len(buttonlist) == len(indicelist):
-        # Actualisation de chaque bouton et son sprite à l'aide de la méthode update() de la classe Button
-        for i in range(len(buttonlist)):
-            buttonlist[i].update(spritelist[0][0], spritelist[1][indicelist[i]])
 
-# Fonction affichant tous les boutons d'une liste de boutons donnée
-def draw_all(buttonlist):
-    # Liste par compréhension réduisant la matrice des boutons à une liste à une seule entrée de sorte à rendre sa navigation triviale
-    newbuttonlist = [i for sublist in buttonlist for i in sublist]
-    # On affiche chaque bouton de la liste à l'aide de la méthode draw() de la classe Button
-    for i in newbuttonlist:
-        i.draw()
+
+class Menu:
+    
+    # Initialisation de chaque instance de cette classe
+    def __init__(self, y, spritelist):
+        self.y = y                          # Hauteur du menu à l'écran
+        self.spritelist = spritelist        # Importation de la matrice contenant tous les sprites du menu
+        self.i, self.j, self.k = 0, 1, 2    # Indices utilisés pour la navigation à l'intérieur de la matrice des sprites
+        # Création des instances boutons du menu
+        # Cellules qui contiennent les images des pièces du véhicule construites par le joueur
+        self.bouton_centre = Button(width // 2 - spritelist[0][0][0].get_rect().width // 2, y - spritelist[0][0][0].get_rect().height // 2, spritelist[0][0][0], spritelist[1][self.j][0])
+        self.bouton_gauche = Button(self.bouton_centre.hitbox.topleft[0] - (spritelist[0][0][0].get_rect().width + 1), self.bouton_centre.hitbox.topleft[1], spritelist[0][0][0], spritelist[1][self.i][0])
+        self.bouton_droit = Button(self.bouton_centre.hitbox.topright[0] + 1, self.bouton_centre.hitbox.topright[1], spritelist[0][0][0], spritelist[1][self.k][0])
+        # Les cellules sont positionnées côte à côte de sorte à former un menu coulissant
+        # Flèches pour la navigation du menu
+        self.fleche_gauche = Button(self.bouton_gauche.hitbox.topleft[0] - (spritelist[0][1][0].get_rect().width + 1), self.bouton_gauche.hitbox.topleft[1], spritelist[0][1][0], spritelist[0][2][0])
+        self.fleche_droite = Button(self.bouton_droit.hitbox.topright[0] + 1, self.bouton_droit.hitbox.topright[1], spritelist[0][1][0], spritelist[0][3][0])
+        # Liste contenant les cellules du menu coulissant, y compris les flèches
+        self.buttonlist = [self.bouton_gauche, self.bouton_centre, self.bouton_droit, self.fleche_droite, self.fleche_gauche]
+                
+    # Méthode mettant à jour les sprites à l'intérieur des cellules du menu
+    def update_all(self):
+        # Liste de indices de navigation de la matrice des sprites
+        self.indicelist = [self.i, self.j, self.k]
+        # Actualisation de chaque bouton et son sprite à l'aide de la méthode update() de la classe Button
+        for x in range(3):
+            self.buttonlist[x].update(self.spritelist[0][0], self.spritelist[1][self.indicelist[x]])
+    
+    # Méthode mettant à jour la liste d'état de chaque bouton du menu coulissant
+    def update_statelist_all(self):
+        for x in self.buttonlist:
+            # On utilise la méthode update_statelist() de la classe Button
+            x.update_statelist()
+        
+    # Méthode affichant tous les boutons du menu coulissant
+    def draw_all(self):
+        # On affiche chaque bouton de la liste à l'aide de la méthode draw() de la classe Button
+        for x in self.buttonlist:
+            x.draw()
+    
+    # Méthode actualisant l'image des deux flèches et tout le menu (les images affichées à l'intérieur) si le joueur intéragit avec une des deux flèches
+    def menu_arrow_update(self):
+        # Les flèches sont aux index 3 et 4 du tableau self.buttonlist
+        for x in range(3, 5):
+            # Si le joueur intéragit ou arrête d'intéragir avec le bouton flèche
+            if self.buttonlist[x].statelist[0] != self.buttonlist[x].statelist[1]:
+                # Actualisation de l'image de la flèche
+                self.buttonlist[x].update(self.spritelist[0][1], self.spritelist[0][x-1])
+                # Si la flèche est cliquée
+                if self.buttonlist[x].clicked:
+                    # Si la flèche droite est cliquée (indice 3 dans self.buttonlist), on recule dans la matrice des sprites
+                    if x == 3:
+                        roll = -1
+                    # Si la flèche gauche est cliquée (indice 4 dans self.buttonlist), on avance dans la matrice des sprites
+                    else:
+                        roll = 1
+                    # Réaffectation des indices de spritelist des images affichées à l'intérieur des cellules du menu coulissant
+                    # Indice = (indice incrémenté/décrémenté) modulo le nombre d'image dans le menu coulissant...
+                    # ...de sorte qu'on pourra passer dans la matrice de l'objet de positon 4 à 0 et inversement de 0 à 4 == il y a un enroulement, le menu n'a ni début ni fin
+                    self.i, self.j, self.k = (self.i + roll) % len(self.spritelist[1]), (self.j+ roll) % len(self.spritelist[1]), (self.k+ roll) % len(self.spritelist[1])
+                    # Actualisation de chaque image dans les cellules du menu selon le roulement effectué
+                    self.update_all()
+                    
+    # Méthode actualisant l'image de la cellule et du sprite représenté à l'intérieur des trois boutons centraux du menu coulissant  
+    def menu_button_update(self):
+        # Liste de indices de navigation de la matrice des sprites
+        self.indicelist = [self.i, self.j, self.k]
+        # Les boutons bouton_gauche, bouton_centre et bouton_droit sont respectivement d'indice 0, 1 et 2 dans le tableau self.buttonlist
+        for x in range(3):
+            # S'il y a changement d'état du bouton == intéraction ou arrêt de l'intéraction du joueur
+            if self.buttonlist[x].statelist[0] != self.buttonlist[x].statelist[1]:
+                # On actualise l'image de la cellule du bouton et l'image à l'intérieure de celui-ci selon son état avec la méthode update() de la classe Button
+                self.buttonlist[x].update(self.spritelist[0][0], self.spritelist[1][self.indicelist[x]])
+    
+    # Méthode actualisant et affichant le menu coulissant selon les intéractions du joueur
+    # Appelle directement toutes les autres méthodes de la classe Menu et indirectement toutes les méthodes de la classe Button
+    # On appelera cette fonction à chque itération de la boucle jeu
+    def interaction_menu(self):
+        # On actualise les listes d'état des boutons du menu coulissant
+        self.update_statelist_all()
+        # On affiche les boutons du menu coulissant
+        self.draw_all()
+        # On fait rouler le menu si une des flèches est cliquée
+        self.menu_arrow_update()
+        # On actualise l'état des boutons du menu (hover, cliqué ou rien) si le joueur intéragit ou arrête d'intéragir avec 
+        self.menu_button_update()
 
 # Fonction pour quitter la fenêtre et arrêter l'exécution du programme
 def quit():
@@ -157,31 +240,10 @@ spritelist = [[[img0_1, img0_2, img0_3], [img0_1_alpha, img0_2_alpha, img0_3_alp
               [img4_1, img4_2, img4_3],
               [img5_1, img5_2, img5_3]]]
 
-# Indices utilisés pour la navigation à l'intérieur de la matrice des images
-i, j, k = 0, 1, 2
-
-# Création des instances boutons du menu
-# Cellules qui contiennent les images des pièces du véhicule construit par le joueur
-button_1 = Button(0, 0, spritelist[0][0][0], spritelist[1][i][0])
-button_1.hitbox.center = width//2, height//2
-button_1.x, button_1.y = button_1.hitbox.topleft
-button_2 = Button(button_1.hitbox.topright[0] + 1, button_1.hitbox.topright[1], spritelist[0][0][0], spritelist[1][j][0])
-button_3 = Button(button_1.hitbox.x - cell_dimensions[0] - 1, button_1.hitbox.y, spritelist[0][0][0], spritelist[1][k][0])
-# Les cellules sont positionnées côte à côte de sorte à former un menu coulissant
-# Flèches pour la navigation du menu
-arrow_1 = Button(0, 0, spritelist[0][1][0], spritelist[0][2][0])
-arrow_2 = Button(0, 0, spritelist[0][1][0], spritelist[0][3][0])
-arrow_1.hitbox.center = button_2.hitbox.center[0] + ((button_2.hitbox.width + arrow_1.hitbox.width) // 2 + 1), button_2.hitbox.center[1]
-arrow_2.hitbox.center = button_3.hitbox.center[0] - ((button_3.hitbox.width + arrow_2.hitbox.width) // 2 + 1), button_3.hitbox.center[1]
-
-# Liste contenant les cellules du menu coulissant y compris les flèches
-buttonlist = [[arrow_1, arrow_2], [button_3, button_1, button_2]]
-
-# Liste d'état se trouvera lors de l'exécution sous la forme [état à l'instant t-1, état à l'instant t]
-# de sorte qu'on mettra à jour l'image d'un bouton que si les deux états sont différents, c'et-àdire que le joueur à intéragit avec le bouton
-# Un état à un instant t se traduit lui-même par un tuple (bouton.hover, bouton.clicked) ---> cf. définition de la classe Button au tout début du programme
-# Initialisation des listes d'état de chaque bouton du menu
-button_1_state, button_2_state, button_3_state, arrow_1_state, arrow_2_state = [0,0], [0,0], [0,0], [0,0], [0,0]
+# Création des instances menu des menus coulissants du jeu
+menu1 = Menu(height//4, spritelist)
+menu2 = Menu(height//2, spritelist)
+menu3 = Menu(3*height//4, spritelist)
 
 # Booléen dont dépend la boucle de jeu
 run = True
@@ -195,37 +257,10 @@ while run:
     # Fond blanc (pour l'instant)
     screen.fill((255, 255, 255))
     
-    # On actualise les listes d'état de chaque bouton à l'aide de la méthode which_state() de la classe Button, qui retourne l'état à l'instant t
-    button_1_state, button_2_state, button_3_state, arrow_1_state, arrow_2_state = [button_1_state[1], button_1.which_state()], [button_2_state[1], button_2.which_state()], [button_3_state[1], button_3.which_state()], [arrow_1_state[1], arrow_1.which_state()], [arrow_2_state[1], arrow_2.which_state()]
-    
-    # On affiche tous les boutons du menu
-    draw_all(buttonlist)
-    
-    # On actualise l'image de la flèche si son état change (= si le joueur intéragit avec le bouton)
-    if arrow_1_state[0] != arrow_1_state[1]:
-        arrow_1.update(spritelist[0][1], spritelist[0][2])
-        # Roulement des sprites des cellules du menu si le joueur clique sur une des flèches
-        if arrow_1.clicked:
-            # Actualisation des indices
-            # Indice = (indice incrémenté/décrémenté) modulo le nombre d'image dans le menu coulissant
-            # de sorte qu'on pourra passer dans la matrice de l'objet de positon 4 à 0 et inversement de 0 à 4 == il y a un enroulement, le menu n'a ni début ni fin
-            i, j, k = (i+1) % len(spritelist[1]), (j+1) % len(spritelist[1]), (k+1) % len(spritelist[1])
-            # Roulement des sprites en actualisant chaque cellule contenant un sprite
-            update_all(buttonlist[1], spritelist, [i, j, k])
-    if arrow_2_state[0] != arrow_2_state[1]:
-        arrow_2.update(spritelist[0][1], spritelist[0][3])
-        if arrow_2.clicked:
-            i, j, k = (i-1) % len(spritelist[1]), (j-1) % len(spritelist[1]), (k-1) % len(spritelist[1])
-            update_all(buttonlist[1], spritelist, [i, j, k])
-    
-    # Actualisation d'un bouton si le joueur intéragit avec (il passe la souris dessus et/ou clique ou enlève sa souris)
-    if button_3_state[0] != button_3_state[1]:
-        button_3.update(spritelist[0][0], spritelist[1][i])
-    if button_1_state[0] != button_1_state[1]:
-        button_1.update(spritelist[0][0], spritelist[1][j])
-    if button_2_state[0] != button_2_state[1]:
-        button_2.update(spritelist[0][0], spritelist[1][k])
-    
+    # Actualisation et affichage de chaque menu  coulissant
+    menu1.interaction_menu()
+    menu2.interaction_menu()
+    menu3.interaction_menu()
     
     #pyg.key.set_repeat(10)
     
