@@ -1,6 +1,4 @@
 Partie menu:
-- Résoudre le problème du clic continu (maintenir clic gauche et déplacer la souris est considéré comme un clic discontinu et bref)
-- Afficher et gérer plusieurs menus déroulants
 - Menu statistiques, création de nouvellee classes de données (dataclasses) pour les pièces du véhicule
 - Affichage de M. Latour et boîte de dialogues, avec apparition progressive des lettres du texte
 - Affichage du véhicule, positionnement des images sélectionnées les unes sur les autres (= assemblage visuel du véhicule)

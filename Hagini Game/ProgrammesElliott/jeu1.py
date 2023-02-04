@@ -4,9 +4,12 @@ import sys
 
 global width
 global height
+global mousestate
 
 # Initialisation de pygame
 pyg.init()
+
+pyg.font.init()
     
 #############################################################################################################
 ################################## Définition des classes et fonctions ######################################
@@ -65,7 +68,7 @@ class Button:
         self.draw()                                 # Affiche le bouton une fois ses sprites actualisés en fonction de son état
 
 
-
+# Création de la classe Menu
 class Menu:
     
     # Initialisation de chaque instance de cette classe
@@ -110,7 +113,8 @@ class Menu:
         # Les flèches sont aux index 3 et 4 du tableau self.buttonlist
         for x in range(3, 5):
             # Si le joueur intéragit ou arrête d'intéragir avec le bouton flèche
-            if self.buttonlist[x].statelist[0] != self.buttonlist[x].statelist[1]:
+            # et si le joueur ne maintient pas le clic gauche (mousestate != [True, True]), de sorte que maintenir clic gauche et déplacer la souris sur un autre bouton ne compte pas comme un clic /// ça aurait été une meilleure idée de vérifier ça directement dans la méthode update() ou which_state() de Button mais j'y arrive pas et ça ça marche donc bon...
+            if self.buttonlist[x].statelist[0] != self.buttonlist[x].statelist[1] and mousestate != [True, True]:              #and mouse_not_held(mousestate)
                 # Actualisation de l'image de la flèche
                 self.buttonlist[x].update(self.spritelist[0][1], self.spritelist[0][x-1])
                 # Si la flèche est cliquée
@@ -127,6 +131,10 @@ class Menu:
                     self.i, self.j, self.k = (self.i + roll) % len(self.spritelist[1]), (self.j+ roll) % len(self.spritelist[1]), (self.k+ roll) % len(self.spritelist[1])
                     # Actualisation de chaque image dans les cellules du menu selon le roulement effectué
                     self.update_all()
+            # Si le joueur relâche le clic gauche
+            if mousestate == [True, False]:
+                # On actualise l'image du bouton pour qu'il ne s'affiche plus comme cliqué
+                self.buttonlist[x].update(self.spritelist[0][1], self.spritelist[0][x-1])
                     
     # Méthode actualisant l'image de la cellule et du sprite représenté à l'intérieur des trois boutons centraux du menu coulissant  
     def menu_button_update(self):
@@ -135,10 +143,15 @@ class Menu:
         # Les boutons bouton_gauche, bouton_centre et bouton_droit sont respectivement d'indice 0, 1 et 2 dans le tableau self.buttonlist
         for x in range(3):
             # S'il y a changement d'état du bouton == intéraction ou arrêt de l'intéraction du joueur
-            if self.buttonlist[x].statelist[0] != self.buttonlist[x].statelist[1]:
+            # et si le joueur ne maintient pas le clic gauche (mousestate != [True, True]), de sorte que maintenir clic gauche et déplacer la souris sur un autre bouton ne compte pas comme un clic
+            if self.buttonlist[x].statelist[0] != self.buttonlist[x].statelist[1] and mousestate != [True, True]:
                 # On actualise l'image de la cellule du bouton et l'image à l'intérieure de celui-ci selon son état avec la méthode update() de la classe Button
                 self.buttonlist[x].update(self.spritelist[0][0], self.spritelist[1][self.indicelist[x]])
-    
+            # Si le clic gauche est relâché
+            if mousestate == [True, False]:
+                # On actualise l'image du bouton pour qu'il ne s'affiche plus comme cliqué
+                self.buttonlist[x].update(self.spritelist[0][0], self.spritelist[1][self.indicelist[x]])
+                
     # Méthode actualisant et affichant le menu coulissant selon les intéractions du joueur
     # Appelle directement toutes les autres méthodes de la classe Menu et indirectement toutes les méthodes de la classe Button
     # On appelera cette fonction à chque itération de la boucle jeu
@@ -179,9 +192,11 @@ fond = background.convert()
 screen.blit(fond, (0, 0))
 pyg.display.flip()
 
+mousestate = [0, 0]
+
 # Dimensions des images du menu calculées directement à partir des valeurs de largeur et de hauteur de l'écran
 cell_dimensions = (width//4, height//5)
-arrow_dimensions = [height // 5 - 10] * 2
+arrow_dimensions = [cell_dimensions[1] - 10] * 2
 arrowcell_dimensions = [i + 10 for i in arrow_dimensions]
 sprite_dimensions = [i // 1.5 for i in cell_dimensions]
 
@@ -257,10 +272,12 @@ while run:
     # Fond blanc (pour l'instant)
     screen.fill((255, 255, 255))
     
-    # Actualisation et affichage de chaque menu  coulissant
+    # Actualisation et affichage de chaque menu coulissant
     menu1.interaction_menu()
     menu2.interaction_menu()
     menu3.interaction_menu()
+    
+    mousestate = [mousestate[1], pyg.mouse.get_pressed()[0]]  
     
     #pyg.key.set_repeat(10)
     
