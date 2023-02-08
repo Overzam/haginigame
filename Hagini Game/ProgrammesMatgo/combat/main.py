@@ -36,6 +36,7 @@ fleche = pygame.image.load("Assets/fleche.png")
 
 moment_move = 0
 
+momentum = 0
 
 def countdown(num_of_secs):
     while num_of_secs:
@@ -821,20 +822,27 @@ while running:
             screen.blit(fleche, (game.playerII.rect.x + 55, game.playerII.rect.y - 10))
 
             g_or_d = random.randint(1,2)
+            #print(momentum)
             if g_or_d == 1:
-                move = random.randint(1,5)
-                for i in range(move):
-                    if game.player.rect.x == 1:
-                        game.player.rect.x = 1
-                    game.player.rect.x -= 1
-                    game.player.move_left()
+                move = random.randint(1,25)
+                momentum += 1
+                if momentum == 100:
+                    momentum = 0
+                    for i in range(move):
+                            if game.player.rect.x == 1:
+                                game.player.rect.x = 1
+                            game.player.rect.x -= 1
+                            game.player.move_left()
             if g_or_d == 2:
-                move = random.randint(1,5)
-                for i in range(move):
-                    if game.player.rect.x == 1:
-                        game.player.rect.x = 1
-                    game.player.rect.x += 1
-                    game.player.move_right()
+                move = random.randint(1,25)
+                momentum += 1
+                if momentum == 100:
+                    momentum = 0
+                    for i in range(move):
+                            if game.player.rect.x == 1:
+                                game.player.rect.x = 1
+                            game.player.rect.x += 1
+                            game.player.move_right()
 
 
             if deuxieme_personnage == 1:
