@@ -2,14 +2,19 @@ from win32api import GetSystemMetrics
 import pygame as pyg
 import sys
 
-global width
-global height
+global width, height
 global mousestate
+global noir, blanc, rouge
+global start_ticks
 
 # Initialisation de pygame
 pyg.init()
 
+# Initialisation du module font de pygame
 pyg.font.init()
+
+pyg.time.Clock()
+start_ticks = pyg.time.get_ticks()
     
 #############################################################################################################
 ################################## Définition des classes et fonctions ######################################
@@ -19,7 +24,7 @@ pyg.font.init()
 class Button:
     
     # Initialisation de chaque instance de cette classe
-    def __init__(self, x, y, image, item_image):
+    def __init__(self, x=float, y=float, image=pyg.Surface, item_image=pyg.Surface):
         self.x = x                                  # Coordonnées
         self.y = y
         self.image = image                          # Image de la cellule
@@ -54,7 +59,7 @@ class Button:
         self.statelist = [self.statelist[1], self.which_state()]
     
     # Méthode mettant à jour un bouton (sa cellule et le sprite)
-    def update(self, buttonspritelist, spritelist):
+    def update(self, buttonspritelist=list, spritelist=list):
         if self.which_state()[0]:
             if self.which_state()[1]:               # Si le bouton est cliqué
                 self.image = buttonspritelist[2]    # Image de la cellule quand le joueur clique dessus
@@ -72,7 +77,7 @@ class Button:
 class Menu:
     
     # Initialisation de chaque instance de cette classe
-    def __init__(self, y, spritelist):
+    def __init__(self, y=float, spritelist=list):
         self.y = y                          # Hauteur du menu à l'écran
         self.spritelist = spritelist        # Importation de la matrice contenant tous les sprites du menu
         self.i, self.j, self.k = 0, 1, 2    # Indices utilisés pour la navigation à l'intérieur de la matrice des sprites
@@ -165,6 +170,110 @@ class Menu:
         # On actualise l'état des boutons du menu (hover, cliqué ou rien) si le joueur intéragit ou arrête d'intéragir avec 
         self.menu_button_update()
 
+'''
+classe boîte de dialogue qui prend en paramètres largeur, hauteur, x et y du point haut gauche ainsi que le dictionnaire de lignes de dialogues
+dialogdict = {'sprite_1': ['.....', '...', '.......'],
+	      'sprite2': ['.....', '.....', '.']}
+dialogue selon sprite cliqué dans les boutons (ou alors selon sprite cliqué sur le modèle de tank pour confirmer que le joueur va restr dessus un certain temps pour tout afficher)
+ET SELON SITUATION
+
+méthode draw qui affiche la boîte de dialogue et le dialogue voulu LIGNE PAR LIGNE ET LETTRE PAR LETTRE 
+'''
+
+class Dialogbox:
+    
+    def __init__(self, width=float, height=float, x=float, y=float, dialogdict=dict):
+        self.width, self.height = width, height             # Largeur et hauteur de la boîte de dialogue
+        self.x, self.y = x, y                               # Coordonnées x et y du coin haut gauche de la boîte de dialogue
+        self.dialogbox_rect = pyg.Rect((self.x, self.y), (self.width, self.height))                 # Définition du rectangle de collisions de la boîte de dialogue
+        self.write_zone_rect = pyg.Rect((self.x , self.y), (self.width * 0.95, self.height * 0.9))  # Définition de la zone dans laquelle sera affichée le texte, ce-dernier ne devant pas en sortir
+        self.write_zone_rect.center = self.dialogbox_rect.center
+        self.dialogdict = dialogdict                        # Dictionnaire contenant toutes les lignes de dialogue de la boîte de dialogue
+        '''
+        # self.image = image
+        CALCULER TAILLE DE LA POLICE EN FONCTION DE WIDTH ET HEIGHT DE L'ECRAN
+        '''
+        self.font = pyg.font.Font(None, 24)                 # On créé la police du texte de la boîte de dialogue
+        self.line_size = self.font.get_linesize()           # Hauteur en pixel que prend une ligne de texte avec la police utilisée ---> espace que l'on mettra entre chaque ligne affichée
+        # Initialisation des varibles qui permettront d'afficher le dialogue ligne par ligne et caractère par caractère
+        self.current_line_number, self.charindex = 0, 0             # Numéro de la ligne en train d'être affichée et position du prochain caractère à afficher dans le string de la ligne de dialogue
+        self.current_dialog, self.current_line = [], ''     # Dialogue à afficher sous forme de tableau contenant des strings, celui en première position étant la première ligne et ainsi de suite, ligne incomplète à laquelle ajoutera le charactère suivant et l'affichera
+        self.delay, self.last_char_time = 0.03, 0           # Délai entre l'affichage de deux charactères successifs et instant de l'affichage du dernier caractère en date
+        
+    # Méthode pour afficher la boîte de dialogue dans son entiereté, la boîte et le texte à l'intérieur
+    def draw(self):
+        # On affiche la boîte de dialogue et la zone d'affichage du texte
+        ''' TEMPORAIRE '''
+        pyg.draw.rect(screen, noir, self.dialogbox_rect, 1)
+        pyg.draw.rect(screen, rouge, self.write_zone_rect, 1)
+        
+        # On affiche les lignes qu'on a fini d'afficher
+        for x in range(len(self.current_dialog[:self.current_line_number])):
+            self.draw_line(self.current_dialog[x], x)
+        
+        # Si toutes les lignes n'ont pas encore été entièrement affichées
+        if len(self.current_dialog) != len(self.current_dialog[:self.current_line_number]):
+            # On affiche la ligne en cours d'affichage caractère par caractère
+            self.draw_line_progressive()
+        # Affiche en continu la ligne en cours d'affichage (sinon l'affichage discontinu)
+        self.draw_line(self.current_line, self.current_line_number)
+    
+    # Méthode de base pour afficher une ligne de texte
+    def draw_line(self, line, line_number):
+        # On créé une surface (=image) contenant le texte à afficher
+        line_to_print = self.font.render(line, 1, noir)
+        # On affiche ce "rendu" du texte dans la zone d'écriture et à la bonne ligne
+        screen.blit(line_to_print, (self.write_zone_rect.x, self.write_zone_rect.y + line_number * self.line_size))
+    
+    # Méthode affichant la ligne en cours caractère par caractère
+    def draw_line_progressive(self):
+        # Ligne de dialogue complète à afficher
+        dialog_line = self.current_dialog[self.current_line_number]
+        # Si la ligne en train d'être afficher n'est pas encore complète
+        if self.current_line != dialog_line:
+            # Temps en secondes
+            time = (pyg.time.get_ticks() - start_ticks) / 1000
+            # Une fois le délai après le dernier caractère affiché écoulé
+            if time > self.delay + self.last_char_time:
+                # Le caractère qu'on affiche maintenant sera le dernier caractère de la prochaine itération de la boucle
+                self.last_char_time = time
+                # On ajoute le prochain caractère à la ligne incomplète en cours d'affichage
+                self.current_line += dialog_line[self.charindex]
+                # Index du prochain caractère à être affiché
+                self.charindex += 1
+                # On affiche la ligne incomplète à l'aide de la méthode draw_line()
+                self.draw_line(self.current_line, self.current_line_number)
+        # Sinon si la ligne est complète
+        else:
+            # On l'affiche
+            self.draw_line(dialog_line, self.current_line_number)
+            self.current_line_number += 1   # On passe à la ligne suivante
+            self.current_line = ''          # La prochaine ligne est pour l'instant vide
+            self.charindex = 0              # Le prochain caractère à afficher sera le tout premier de la prochaine ligne
+            
+    '''
+    # méthode pour couper les lignes de dialogues au niveau du dernier espace si elles sont trop longues
+    def dict_slice(self):
+        for x in self.dialogdict.values():
+            z = int(self.safezone_rect.width)
+            #x = [i[j:j+z] for i in x for j in range(0, len(i), z)]
+            for y in range(len(x)):
+                self.list_slice(x, y)
+                
+    def list_slice(self, x, y):
+        if x[y].size()[0] > self.safezone_rect.width:
+            z = int(self.safezone_rect.width)
+            tourne = True
+            while z >= 0 and tourne:
+                if self.dialogline[x] == ' ':
+                    saut = z
+                    tourne = False
+                z -= 1
+            x[y] = x[:saut]
+            x.insert(x[saut+1:], y+1)
+    '''
+        
+
 # Fonction pour quitter la fenêtre et arrêter l'exécution du programme
 def quit():
     run  = False
@@ -175,17 +284,14 @@ def quit():
 ######################################### Définition des variables ##########################################
 #############################################################################################################
 
-# 1920 = 3 * 5 * 2^7 -----> 1920/15=128 ----> 2 3 1 3 1 3 2
-# 1080 = 3^3 * 2^3 * 5 ----> 1080 / 30 = 36 ---> ???
 width = GetSystemMetrics(0)
 height = GetSystemMetrics(1)
-'''width = int(GetSystemMetrics(0) // 2)
-height = int(GetSystemMetrics(1) // 2)'''
-
+#width = int(GetSystemMetrics(0) // 2)
+#height = int(GetSystemMetrics(1) // 2)
 titre = 'feur'
 pyg.display.set_caption(titre)
 screen = pyg.display.set_mode((width, height))
-'''hitbox_screen = pyg.Surface.get_rect(screen)'''
+#hitbox_screen = pyg.Surface.get_rect(screen)
 background = pyg.image.load('img/placeholder_bg.png')
 background = pyg.transform.scale(background, (width, height)).convert()
 fond = background.convert()
@@ -194,11 +300,15 @@ pyg.display.flip()
 
 mousestate = [0, 0]
 
+noir = (0,0,0)
+blanc = (255,255,255)
+rouge = (255, 0, 0)
+
 # Dimensions des images du menu calculées directement à partir des valeurs de largeur et de hauteur de l'écran
 cell_dimensions = (width//4, height//5)
 arrow_dimensions = [cell_dimensions[1] - 10] * 2
 arrowcell_dimensions = [i + 10 for i in arrow_dimensions]
-sprite_dimensions = [i // 1.5 for i in cell_dimensions]
+sprite_dimensions = [int(i // 1.5) for i in cell_dimensions]
 
 # Importation et transformation des images du menu
 # Images des cellules
@@ -260,6 +370,13 @@ menu1 = Menu(height//4, spritelist)
 menu2 = Menu(height//2, spritelist)
 menu3 = Menu(3*height//4, spritelist)
 
+textdict = {'win': ['[placeholder]', '[placeholder][placeholder][placeholder]', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaa[placeholder]aaaaaaaaaaaaaaaaaaaaaaaaaaa']}
+
+a = Dialogbox(width//2, height//2, 50, 50, textdict)
+#a.dialogbox_rect.center = (width//2, height//2)
+a.current_dialog = textdict['win']
+b = 0
+
 # Booléen dont dépend la boucle de jeu
 run = True
 
@@ -270,15 +387,25 @@ run = True
 while run:
     
     # Fond blanc (pour l'instant)
-    screen.fill((255, 255, 255))
+    screen.fill(blanc)
     
+    a.draw()
+    
+    # Tableau de l'état du clic gauche
+    mousestate = [mousestate[1], pyg.mouse.get_pressed()[0]]
+    
+    ''' ON PEUT METTRE DES BOUCLES FOR MAIS PAS WHILE'''
+    '''
+    for i in range(300):
+        b += 1
+        print(b)
+    '''
+    '''
     # Actualisation et affichage de chaque menu coulissant
     menu1.interaction_menu()
     menu2.interaction_menu()
     menu3.interaction_menu()
-    
-    mousestate = [mousestate[1], pyg.mouse.get_pressed()[0]]  
-    
+    '''
     #pyg.key.set_repeat(10)
     
     for event in pyg.event.get():
