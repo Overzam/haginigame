@@ -821,7 +821,7 @@ while running:
 
             screen.blit(fleche, (game.playerII.rect.x + 55, game.playerII.rect.y - 10))
 
-            g_or_d = random.randint(1,2)
+            g_or_d = random.randint(1,2)                                                                   # mouvement aléatoire du bot
             #print(momentum)
             if g_or_d == 1:
                 move = random.randint(1,25)
@@ -843,6 +843,7 @@ while running:
                                 game.player.rect.x = 1
                             game.player.rect.x += 1
                             game.player.move_right()
+            
 
 
             if deuxieme_personnage == 1:
@@ -881,8 +882,14 @@ while running:
                     selecCOMBAT = False
                     selecCombat = False
                     dead = True
+            
+            if game.player.rect.x < 0:
+                game.player.rect.x = 0
+            
+            if game.player.rect.x > game.playerII.rect.x - 50:                                                        # empecher le bot d'aller derriere le joueur
+                game.player.rect.x = game.playerII.rect.x - 50
 
-
+    
             # joueur2 -> gauche ou droite
             if game.pressed.get(pygame.K_q) and game.playerII.rect.x > 0:
                 p1 = game.player.rect.x
@@ -999,9 +1006,9 @@ while running:
                 elif deuxieme_personnage == 3:
                     screen.blit(pygame.image.load("Assets/3r/3coupr.png"), game.playerII.rect)
                 if p2 - p1 <= ECART2:
-                    if (n % 2) == 0:
-                        player.health -= 0.001
-                        playerII.exp -= 0.03
+                    if (n % 2) == 0:                                                                           # coup de poing joueurs
+                        player.health -= 0.1
+                        playerII.exp -= 0.3
                         if playerII.exp <= 10 and playerII.exp >= 0 :
                             if deuxieme_personnage == 1:
                                 screen.blit(pygame.image.load("Assets/mainSPR.png"), game.playerII.rect)
@@ -1015,8 +1022,8 @@ while running:
                             playerII.exp = 100
                         n += 1
                     else:
-                        player.health -= 0.01
-                        playerII.exp -= 0.03
+                        player.health -= 0.1
+                        playerII.exp -= 0.3
                         if playerII.exp <= 10 and playerII.exp >= 0 :
                             if deuxieme_personnage == 1:
                                 screen.blit(pygame.image.load("Assets/mainSPR.png"), game.playerII.rect)
