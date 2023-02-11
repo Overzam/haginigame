@@ -2,6 +2,7 @@ from win32api import GetSystemMetrics
 import pygame as pyg
 import sys
 
+# Déclaration des variables utilisées à travers les fonctions et classes du programme comme globales
 global width, height
 global mousestate
 global noir, blanc, rouge
@@ -13,7 +14,10 @@ pyg.init()
 # Initialisation du module font de pygame
 pyg.font.init()
 
+# Création de l'objet horloge, outil temporel de pygame
 pyg.time.Clock()
+# Temps en millisecondes après l'initialisation de pygame au début du lancement du programme
+# Servira pour des calculs de durée
 start_ticks = pyg.time.get_ticks()
     
 #############################################################################################################
@@ -182,12 +186,13 @@ class Dialogbox:
         self.width, self.height = width, height             # Largeur et hauteur de la boîte de dialogue
         self.x, self.y = x, y                               # Coordonnées x et y du coin haut gauche de la boîte de dialogue
         self.dialogbox_rect = pyg.Rect((self.x, self.y), (self.width, self.height))                 # Définition du rectangle de collisions de la boîte de dialogue
-        self.write_zone_rect = pyg.Rect((self.x , self.y), (self.width * 0.95, self.height * 0.9))  # Définition de la zone dans laquelle sera affichée le texte, ce-dernier ne devant pas en sortir
+        self.write_zone_rect = pyg.Rect((self.x , self.y), (self.width * 0.95, self.height * 0.9))  # Définition de la zone dans laquelle sera affichée le texte, ce dernier ne devant pas en sortir
         self.write_zone_rect.center = self.dialogbox_rect.center
+        ''' CALCULER LA TAILLE DE LA POLICE EN FONCTION DES MENSURATIONS DE LA BOITE DE DIALOGUE OU DE L'ECRAN POUR NE PAS QUE LE TEXTE DEPASSE LA BOITE VERTICALEMENT (PAS UNE SOLUTION PARFAITE MAIS PAS VRAIMENT UTILE DE TRAVAILLER 5 A 10H DE PLUS POUR CODER UN PETIT ASCENSEUR) '''
         self.font = pyg.font.Font(None, 24)                 # On créé la police du texte de la boîte de dialogue
         self.line_height = self.font.get_linesize()         # Hauteur en pixel que prend une ligne de texte avec la police utilisée ---> espace que l'on mettra entre chaque ligne affichée
         self.dialogdict = dialogdict                        # Dictionnaire regroupant tous les dialogues affichable par la boîte de dialogue sous la forme {'dialogue_1': [ligne_1, ligne_2, ligne_3], 'dialogue_2': [ligne_1, ligne_2, ligne_3, ligne_4], etc.}, où la clé portera le nom de la condition requise pour lancer le dialogue en valeur
-        ''' UNE FOIS LES LIGNES ADAPTEES, ELLES NE SERONT PLUS MODIFIEES, IL FAUT DONC POUR ETRE OPTIMALE LES STOCKER SOUS LA FORME DE TUPLES ET NON DE TABLEAUX QUI SONT PLUS COUTEUX '''
+        ''' UNE FOIS LES LIGNES ADAPTEES, ELLES NE SERONT PLUS MODIFIEES, IL FAUT DONC POUR ETRE OPTIMAL LES STOCKER SOUS LA FORME DE TUPLES ET NON DE TABLEAUX QUI SONT PLUS COUTEUX '''
         self.dict_slice()                                   # On coupe à l'avance chaque ligne de dialogue du dictionnaire si celle-ci prend trop de place (dépasse) la zone d'affichage du texte lorsqu'elle est affichée, utilise la méthode dict_slice() de cette classe
         ''' self.image = image '''
         # Initialisation des variables qui permettront d'afficher le dialogue ligne par ligne et caractère par caractère
@@ -197,35 +202,37 @@ class Dialogbox:
         
     # Méthode modifiant les tableaux de lignes de dialogue du dictionnaire suivant la méthode list_slice()
     def dict_slice(self):
-        # Pour tous les tableaux de lignes de dialogue dans le dictionnaire
-        for v, w in self.dialogdict.items():
+        # Pour toutes les clés et leur tableau de lignes de dialogue en valeur dans le dictionnaire
+        for key, valuelist in self.dialogdict.items():
             # Pour chaque ligne de dialogue, sous forme de chaîne de caractère, dans chaque tableau du dictionnaire des dialogues
-            for x in range(len(w)):
+            for line_index in range(len(valuelist)):
                 # On appelle la méthode list_slice()
-                w[x] = self.list_slice(w[x])
-            self.dialogdict[v] = [i for sublist in w for i in sublist]
+                valuelist[line_index] = self.list_slice(valuelist[line_index])
+            # On réaffecte le tableau de lignes de dialogue du dictionnaire
+            # Ce que fait la liste par compréhension: [['a'], ['b'], ['c'], ['d']] ---> ['a', 'b', 'c', 'd']
+            self.dialogdict[key] = [i for sublist in valuelist for i in sublist]
         
     # Méthode RECURSIVE coupant une ligne de dialogue à l'emplacement d'un espace de sorte qu'elle s'affiche dans la zone d'affichage de la boîte de dialogue sans en dépasser
     # ATTENTION: modifie les lignes de dialogue de manière destructive: enlève des espaces dans les lignes de dialogue
-    def list_slice(self, l):
+    def list_slice(self, line):
         # Si la ligne de dialogue ne dépasse pas la largeur de la zone d'affichage
-        if pyg.font.Font.size(self.font, l)[0] <= self.write_zone_rect.width:
+        if pyg.font.Font.size(self.font, line)[0] <= self.write_zone_rect.width:
             # On ne la modifie pas
-            return [l]
+            return [line]
         # Sinon on coupe la liste en deux
         ''' PAS OPTIMAL, ON TRAVERSE TOUTE LA CHAINE DE CARACTERE DEPUIS LE DEBUT, ALORS QU'ON PEUT DIRECTEMENT PARTIR DE L'INDEX CORRESPONDANT A self.write_zone_rect.width MAIS QU'IL FAUDRAIT CALCULER PAR CONTRE '''
         # On initialise une variable scan qui sera l'index du caractère où on coupe la liste en deux
         scan = 0
         # Tant qu'on n'est pas arrivé à la fin de la liste (n'arrivera pas) et que la chaîne de caractère est toujours affichable 
-        while scan < len(l) - 1 and pyg.font.Font.size(self.font, l[:scan])[0] < self.write_zone_rect.width:
+        while scan < len(line) - 1 and pyg.font.Font.size(self.font, line[:scan])[0] < self.write_zone_rect.width:
             # Si le caractère est un espace
-            if l[scan] == ' ':
+            if line[scan] == ' ':
                 # On trace temporairement la coupe à l'index de l'espace
                 cut = scan
             # On regarde pour le caractère suivant
             scan += 1
         # On retourne la première partie affichable de la chaîne de caractère, et on appelle cette même méthode sur le reste de la chaîne dans le cas où la deuxième partie n'est pas affichable
-        return [l[:cut]] + self.list_slice(l[cut+1:])    
+        return [line[:cut]] + self.list_slice(line[cut+1:])    
         
     # Méthode de base pour afficher une ligne de texte
     def draw_line(self, line, line_number):
@@ -238,7 +245,7 @@ class Dialogbox:
     def draw_line_progressive(self):
         # Ligne de dialogue complète à afficher
         dialog_line = self.current_dialog[self.current_line_number]
-        # Si la ligne en train d'être afficher n'est pas encore complète
+        # Si la ligne en train d'être affichée n'est pas encore complète
         if self.current_line != dialog_line:
             # Temps en secondes
             time = (pyg.time.get_ticks() - start_ticks) / 1000
@@ -269,7 +276,7 @@ class Dialogbox:
         if len(self.current_dialog) != len(self.current_dialog[:self.current_line_number]):
             # On affiche la ligne en cours d'affichage caractère par caractère
             self.draw_line_progressive()
-        # Affiche en continu la ligne en cours d'affichage (sinon l'affichage discontinu)
+        # Affiche en continu la ligne en cours d'affichage (sinon l'affichage est discontinu)
         self.draw_line(self.current_line, self.current_line_number)
         
     # Méthode pour afficher la boîte de dialogue dans son entiereté, la boîte et le texte à l'intérieur
@@ -279,8 +286,76 @@ class Dialogbox:
         pyg.draw.rect(screen, noir, self.dialogbox_rect, 1)
         pyg.draw.rect(screen, rouge, self.write_zone_rect, 1)
         
+        # On affiche le texte de la boîte de dialogue
         self.draw_all_lines()
-        
+
+# Fonction chargeant toutes les images du jeu
+# Je l'ai mis à l'intérieur d'une fonction car gêne la visibilité du code par sa taille et sa répétition
+def image_load():
+    # Dimensions des images du menu calculées directement à partir des valeurs de largeur et de hauteur de l'écran
+    cell_dimensions = (width//4, height//5)
+    arrow_dimensions = [cell_dimensions[1] - 10] * 2
+    arrowcell_dimensions = [i + 10 for i in arrow_dimensions]
+    sprite_dimensions = [int(i // 1.5) for i in cell_dimensions]
+    
+    # Importation et transformation des images du menu
+    # Images des cellules
+    img0_1 = pyg.image.load('img/menu_cell_normal.png')
+    img0_1 = pyg.transform.scale(img0_1, cell_dimensions).convert_alpha()
+    img0_2 = pyg.image.load('img/menu_cell_hover.png')
+    img0_2 = pyg.transform.scale(img0_2, cell_dimensions).convert_alpha()
+    img0_3 = pyg.image.load('img/menu_cell_click.png')
+    img0_3 = pyg.transform.scale(img0_3, cell_dimensions).convert_alpha()
+    img0_1_alpha = pyg.transform.scale(img0_1, arrowcell_dimensions).convert_alpha()
+    img0_2_alpha = pyg.transform.scale(img0_2, arrowcell_dimensions).convert_alpha()
+    img0_3_alpha = pyg.transform.scale(img0_3, arrowcell_dimensions).convert_alpha()
+    # Images des sprites affichés à l'intérieur des cases
+    img0_4 = pyg.image.load('img/arrow.png')
+    img0_4 = pyg.transform.scale(img0_4, arrow_dimensions).convert_alpha()
+    img0_5 = pyg.transform.flip(img0_4, 1, 0)
+    img1_1 = pyg.image.load('img/normal.png')
+    img1_1 = pyg.transform.scale(img1_1, sprite_dimensions).convert_alpha()
+    img1_2 = pyg.image.load('img/hover.png')
+    img1_2 = pyg.transform.scale(img1_2, sprite_dimensions).convert_alpha()
+    img1_3 = pyg.image.load('img/click.png')
+    img1_3 = pyg.transform.scale(img1_3, sprite_dimensions).convert_alpha()
+    img2_1 = pyg.image.load('img/normal2.png')
+    img2_1 = pyg.transform.scale(img2_1, sprite_dimensions).convert_alpha()
+    img2_2 = pyg.image.load('img/hover2.png')
+    img2_2 = pyg.transform.scale(img2_2, sprite_dimensions).convert_alpha()
+    img2_3 = pyg.image.load('img/click2.png')
+    img2_3 = pyg.transform.scale(img2_3, sprite_dimensions).convert_alpha()
+    img3_1 = pyg.image.load('img/normal3.png')
+    img3_1 = pyg.transform.scale(img3_1, sprite_dimensions).convert_alpha()
+    img3_2 = pyg.image.load('img/hover3.png')
+    img3_2 = pyg.transform.scale(img3_2, sprite_dimensions).convert_alpha()
+    img3_3 = pyg.image.load('img/click3.png')
+    img3_3 = pyg.transform.scale(img3_3, sprite_dimensions).convert_alpha()
+    img4_1 = pyg.image.load('img/normal4.png')
+    img4_1 = pyg.transform.scale(img4_1, sprite_dimensions).convert_alpha()
+    img4_2 = pyg.image.load('img/hover4.png')
+    img4_2 = pyg.transform.scale(img4_2, sprite_dimensions).convert_alpha()
+    img4_3 = pyg.image.load('img/click4.png')
+    img4_3 = pyg.transform.scale(img4_3, sprite_dimensions).convert_alpha()
+    img5_1 = pyg.image.load('img/normal5.png')
+    img5_1 = pyg.transform.scale(img5_1, sprite_dimensions).convert_alpha()
+    img5_2 = pyg.image.load('img/hover5.png')
+    img5_2 = pyg.transform.scale(img5_2, sprite_dimensions).convert_alpha()
+    img5_3 = pyg.image.load('img/click5.png')
+    img5_3 = pyg.transform.scale(img5_3, sprite_dimensions).convert_alpha()
+
+    # Matrice contenant toutes les images du menu
+    # Rend la réaffectation d'une image suite à une intéraction du joueur facile
+    spritelist = [[[img0_1, img0_2, img0_3], [img0_1_alpha, img0_2_alpha, img0_3_alpha], [img0_4]*3, [img0_5]*3],
+                  [[img1_1, img1_2, img1_3],
+                  [img2_1, img2_2, img2_3],
+                  [img3_1, img3_2, img3_3],
+                  [img4_1, img4_2, img4_3],
+                  [img5_1, img5_2, img5_3]]]
+    
+    # On retourne la spritelist
+    return spritelist
+
 # Fonction pour quitter la fenêtre et arrêter l'exécution du programme
 def quit():
     run  = False
@@ -291,87 +366,39 @@ def quit():
 ######################################### Définition des variables ##########################################
 #############################################################################################################
 
-width = GetSystemMetrics(0)
-height = GetSystemMetrics(1)
-#width = int(GetSystemMetrics(0) // 2)
-#height = int(GetSystemMetrics(1) // 2)
+# Largeur et hauteur de l'écran
+width, height = GetSystemMetrics(0), GetSystemMetrics(1)
+#width, height = int(GetSystemMetrics(0) // 2), int(GetSystemMetrics(1) // 2)
+# Titre du jeu
 titre = 'feur'
 pyg.display.set_caption(titre)
 screen = pyg.display.set_mode((width, height))
-#hitbox_screen = pyg.Surface.get_rect(screen)
+'''hitbox_screen = pyg.Surface.get_rect(screen)'''
+# Définition et affichage du fond du jeu
 background = pyg.image.load('img/placeholder_bg.png')
 background = pyg.transform.scale(background, (width, height)).convert()
 fond = background.convert()
 screen.blit(fond, (0, 0))
 pyg.display.flip()
 
+# Initialisation du tableau d'état du clic gauche de la souris
 mousestate = [0, 0]
 
+# Définition couleurs
 noir = (0,0,0)
 blanc = (255,255,255)
 rouge = (255, 0, 0)
 
-# Dimensions des images du menu calculées directement à partir des valeurs de largeur et de hauteur de l'écran
-cell_dimensions = (width//4, height//5)
-arrow_dimensions = [cell_dimensions[1] - 10] * 2
-arrowcell_dimensions = [i + 10 for i in arrow_dimensions]
-sprite_dimensions = [int(i // 1.5) for i in cell_dimensions]
+# Appel de la fonction image_load() qui renvoie la matrice contenant toutes les images du jeu
+spritelist = image_load()
 
-# Importation et transformation des images du menu
-# Images des cellules
-img0_1 = pyg.image.load('img/menu_cell_normal.png')
-img0_1 = pyg.transform.scale(img0_1, cell_dimensions).convert_alpha()
-img0_2 = pyg.image.load('img/menu_cell_hover.png')
-img0_2 = pyg.transform.scale(img0_2, cell_dimensions).convert_alpha()
-img0_3 = pyg.image.load('img/menu_cell_click.png')
-img0_3 = pyg.transform.scale(img0_3, cell_dimensions).convert_alpha()
-img0_1_alpha = pyg.transform.scale(img0_1, arrowcell_dimensions).convert_alpha()
-img0_2_alpha = pyg.transform.scale(img0_2, arrowcell_dimensions).convert_alpha()
-img0_3_alpha = pyg.transform.scale(img0_3, arrowcell_dimensions).convert_alpha()
-# Images des sprites affichés à l'intérieur des cases
-img0_4 = pyg.image.load('img/arrow.png')
-img0_4 = pyg.transform.scale(img0_4, arrow_dimensions).convert_alpha()
-img0_5 = pyg.transform.flip(img0_4, 1, 0)
-img1_1 = pyg.image.load('img/normal.png')
-img1_1 = pyg.transform.scale(img1_1, sprite_dimensions).convert_alpha()
-img1_2 = pyg.image.load('img/hover.png')
-img1_2 = pyg.transform.scale(img1_2, sprite_dimensions).convert_alpha()
-img1_3 = pyg.image.load('img/click.png')
-img1_3 = pyg.transform.scale(img1_3, sprite_dimensions).convert_alpha()
-img2_1 = pyg.image.load('img/normal2.png')
-img2_1 = pyg.transform.scale(img2_1, sprite_dimensions).convert_alpha()
-img2_2 = pyg.image.load('img/hover2.png')
-img2_2 = pyg.transform.scale(img2_2, sprite_dimensions).convert_alpha()
-img2_3 = pyg.image.load('img/click2.png')
-img2_3 = pyg.transform.scale(img2_3, sprite_dimensions).convert_alpha()
-img3_1 = pyg.image.load('img/normal3.png')
-img3_1 = pyg.transform.scale(img3_1, sprite_dimensions).convert_alpha()
-img3_2 = pyg.image.load('img/hover3.png')
-img3_2 = pyg.transform.scale(img3_2, sprite_dimensions).convert_alpha()
-img3_3 = pyg.image.load('img/click3.png')
-img3_3 = pyg.transform.scale(img3_3, sprite_dimensions).convert_alpha()
-img4_1 = pyg.image.load('img/normal4.png')
-img4_1 = pyg.transform.scale(img4_1, sprite_dimensions).convert_alpha()
-img4_2 = pyg.image.load('img/hover4.png')
-img4_2 = pyg.transform.scale(img4_2, sprite_dimensions).convert_alpha()
-img4_3 = pyg.image.load('img/click4.png')
-img4_3 = pyg.transform.scale(img4_3, sprite_dimensions).convert_alpha()
-img5_1 = pyg.image.load('img/normal5.png')
-img5_1 = pyg.transform.scale(img5_1, sprite_dimensions).convert_alpha()
-img5_2 = pyg.image.load('img/hover5.png')
-img5_2 = pyg.transform.scale(img5_2, sprite_dimensions).convert_alpha()
-img5_3 = pyg.image.load('img/click5.png')
-img5_3 = pyg.transform.scale(img5_3, sprite_dimensions).convert_alpha()
+''' TEST '''
 
-# Matrice contenant toutes les images du menu
-# Rend la réaffectation d'une image suite à une intéraction du joueur facile
-spritelist = [[[img0_1, img0_2, img0_3], [img0_1_alpha, img0_2_alpha, img0_3_alpha], [img0_4]*3, [img0_5]*3],
-              [[img1_1, img1_2, img1_3],
-              [img2_1, img2_2, img2_3],
-              [img3_1, img3_2, img3_3],
-              [img4_1, img4_2, img4_3],
-              [img5_1, img5_2, img5_3]]]
 
+''' METTRE DANS UNE FONCTION COMME POUR LA SPRITELIST QUAND CE SERA COMPLET '''
+''' PLUSIEURS BOITES DE DIALOGUE DONC PLUSIEURS DICTIONNAIRES QU'ON POURRAIT REGROUPER DANS UN TABLEAU DE LA MEME MANIERE QUE LA SPRITELIST '''
+# Dictionnaire contenant toutes les lignes de dialogue d'une boîte dialogue
+# On préférera que cette variable soit un dictionnaire pour naviguer de manière naturelle à travers les dialogues: quand bouton_gauche cliqué, charger dans la boîte de dialogue la liste de lignes de dialogues correspondant à la clé 'bouton_gauche'
 textdict = {'feur': ['Ah bon bah quand même!', 'C" est quand même con d''utiliser de si mauvais placeholders quelle idée de merde franchement', 'OMORI est un très mauvais jeu, on ne peux faire plus gay qu"OMORI, c"est strictement possible, personnellement je déteste OMORI, particulièrement toute la partie avec Humphrey qui est sincèrement une horreur d"un point de vue game-design, une horreur vraiment. Pourtant les Slimegirls sont grave baisables mais je suis arrêté par le simple ennui de cette zone du jeu. Deeper Well juste avant était bien plus intéressant bien que snas gameplay vraiment je me répète, c"est un placeholder AAAAAAAAAAAAAHHH']}
 
 # Création des instances menu des menus coulissants du jeu
@@ -379,10 +406,12 @@ menu1 = Menu(height//4, spritelist)
 menu2 = Menu(height//2, spritelist)
 menu3 = Menu(3*height//4, spritelist)
 
+# Création de l'instnce boîte de dialogue
 test_dialogbox = Dialogbox(width//2, height//2, 50, 50, textdict)
 test_dialogbox.current_dialog = test_dialogbox.dialogdict['feur']
 
-b = 0
+
+''' /TEST '''
 
 # Booléen dont dépend la boucle de jeu
 run = True
@@ -396,25 +425,26 @@ while run:
     # Fond blanc (pour l'instant)
     screen.fill(blanc)
     
-    test_dialogbox.draw()
-    
     # Tableau de l'état du clic gauche
     mousestate = [mousestate[1], pyg.mouse.get_pressed()[0]]
     
-    ''' ON PEUT METTRE DES BOUCLES FOR MAIS PAS WHILE'''
-    '''
-    for i in range(300):
-        b += 1
-        print(b)
-    '''
+    ''' TEST '''
+    
+    # Affichage de la boîte de dialogue et de son texte
+    test_dialogbox.draw()
+    
     '''
     # Actualisation et affichage de chaque menu coulissant
     menu1.interaction_menu()
     menu2.interaction_menu()
     menu3.interaction_menu()
     '''
-    #pyg.key.set_repeat(10)
     
+    ''' /TEST '''
+    
+    ''' pyg.key.set_repeat(10) '''
+    
+    # Pour quitter le jeu
     for event in pyg.event.get():
         
         if event.type == pyg.QUIT:
