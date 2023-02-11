@@ -171,59 +171,68 @@ class Menu:
         self.menu_button_update()
 
 '''
-classe boîte de dialogue qui prend en paramètres largeur, hauteur, x et y du point haut gauche ainsi que le dictionnaire de lignes de dialogues
-dialogdict = {'sprite_1': ['.....', '...', '.......'],
-	      'sprite2': ['.....', '.....', '.']}
-dialogue selon sprite cliqué dans les boutons (ou alors selon sprite cliqué sur le modèle de tank pour confirmer que le joueur va restr dessus un certain temps pour tout afficher)
-ET SELON SITUATION
-
-méthode draw qui affiche la boîte de dialogue et le dialogue voulu LIGNE PAR LIGNE ET LETTRE PAR LETTRE 
+dialogue SITUATIONNEL selon sprite cliqué dans les boutons (ou alors selon sprite cliqué sur le modèle de tank pour confirmer que le joueur va rester dessus un certain temps pour tout afficher)
 '''
 
+# Création de la classe Dialogbox (boîte de dialogue)
 class Dialogbox:
     
+    # Initialisation de chaque instance de cette classe
     def __init__(self, width=float, height=float, x=float, y=float, dialogdict=dict):
         self.width, self.height = width, height             # Largeur et hauteur de la boîte de dialogue
         self.x, self.y = x, y                               # Coordonnées x et y du coin haut gauche de la boîte de dialogue
         self.dialogbox_rect = pyg.Rect((self.x, self.y), (self.width, self.height))                 # Définition du rectangle de collisions de la boîte de dialogue
         self.write_zone_rect = pyg.Rect((self.x , self.y), (self.width * 0.95, self.height * 0.9))  # Définition de la zone dans laquelle sera affichée le texte, ce-dernier ne devant pas en sortir
         self.write_zone_rect.center = self.dialogbox_rect.center
-        self.dialogdict = dialogdict                        # Dictionnaire contenant toutes les lignes de dialogue de la boîte de dialogue
-        '''
-        # self.image = image
-        CALCULER TAILLE DE LA POLICE EN FONCTION DE WIDTH ET HEIGHT DE L'ECRAN
-        '''
         self.font = pyg.font.Font(None, 24)                 # On créé la police du texte de la boîte de dialogue
-        self.line_size = self.font.get_linesize()           # Hauteur en pixel que prend une ligne de texte avec la police utilisée ---> espace que l'on mettra entre chaque ligne affichée
-        # Initialisation des varibles qui permettront d'afficher le dialogue ligne par ligne et caractère par caractère
-        self.current_line_number, self.charindex = 0, 0             # Numéro de la ligne en train d'être affichée et position du prochain caractère à afficher dans le string de la ligne de dialogue
+        self.line_height = self.font.get_linesize()         # Hauteur en pixel que prend une ligne de texte avec la police utilisée ---> espace que l'on mettra entre chaque ligne affichée
+        self.dialogdict = dialogdict                        # Dictionnaire regroupant tous les dialogues affichable par la boîte de dialogue sous la forme {'dialogue_1': [ligne_1, ligne_2, ligne_3], 'dialogue_2': [ligne_1, ligne_2, ligne_3, ligne_4], etc.}, où la clé portera le nom de la condition requise pour lancer le dialogue en valeur
+        ''' UNE FOIS LES LIGNES ADAPTEES, ELLES NE SERONT PLUS MODIFIEES, IL FAUT DONC POUR ETRE OPTIMALE LES STOCKER SOUS LA FORME DE TUPLES ET NON DE TABLEAUX QUI SONT PLUS COUTEUX '''
+        self.dict_slice()                                   # On coupe à l'avance chaque ligne de dialogue du dictionnaire si celle-ci prend trop de place (dépasse) la zone d'affichage du texte lorsqu'elle est affichée, utilise la méthode dict_slice() de cette classe
+        ''' self.image = image '''
+        # Initialisation des variables qui permettront d'afficher le dialogue ligne par ligne et caractère par caractère
+        self.current_line_number, self.charindex = 0, 0     # Numéro de la ligne en train d'être affichée et position du prochain caractère à afficher dans le string de la ligne de dialogue
         self.current_dialog, self.current_line = [], ''     # Dialogue à afficher sous forme de tableau contenant des strings, celui en première position étant la première ligne et ainsi de suite, ligne incomplète à laquelle ajoutera le charactère suivant et l'affichera
         self.delay, self.last_char_time = 0.03, 0           # Délai entre l'affichage de deux charactères successifs et instant de l'affichage du dernier caractère en date
         
-    # Méthode pour afficher la boîte de dialogue dans son entiereté, la boîte et le texte à l'intérieur
-    def draw(self):
-        # On affiche la boîte de dialogue et la zone d'affichage du texte
-        ''' TEMPORAIRE '''
-        pyg.draw.rect(screen, noir, self.dialogbox_rect, 1)
-        pyg.draw.rect(screen, rouge, self.write_zone_rect, 1)
+    # Méthode modifiant les tableaux de lignes de dialogue du dictionnaire suivant la méthode list_slice()
+    def dict_slice(self):
+        # Pour tous les tableaux de lignes de dialogue dans le dictionnaire
+        for v, w in self.dialogdict.items():
+            # Pour chaque ligne de dialogue, sous forme de chaîne de caractère, dans chaque tableau du dictionnaire des dialogues
+            for x in range(len(w)):
+                # On appelle la méthode list_slice()
+                w[x] = self.list_slice(w[x])
+            self.dialogdict[v] = [i for sublist in w for i in sublist]
         
-        # On affiche les lignes qu'on a fini d'afficher
-        for x in range(len(self.current_dialog[:self.current_line_number])):
-            self.draw_line(self.current_dialog[x], x)
+    # Méthode RECURSIVE coupant une ligne de dialogue à l'emplacement d'un espace de sorte qu'elle s'affiche dans la zone d'affichage de la boîte de dialogue sans en dépasser
+    # ATTENTION: modifie les lignes de dialogue de manière destructive: enlève des espaces dans les lignes de dialogue
+    def list_slice(self, l):
+        # Si la ligne de dialogue ne dépasse pas la largeur de la zone d'affichage
+        if pyg.font.Font.size(self.font, l)[0] <= self.write_zone_rect.width:
+            # On ne la modifie pas
+            return [l]
+        # Sinon on coupe la liste en deux
+        ''' PAS OPTIMAL, ON TRAVERSE TOUTE LA CHAINE DE CARACTERE DEPUIS LE DEBUT, ALORS QU'ON PEUT DIRECTEMENT PARTIR DE L'INDEX CORRESPONDANT A self.write_zone_rect.width MAIS QU'IL FAUDRAIT CALCULER PAR CONTRE '''
+        # On initialise une variable scan qui sera l'index du caractère où on coupe la liste en deux
+        scan = 0
+        # Tant qu'on n'est pas arrivé à la fin de la liste (n'arrivera pas) et que la chaîne de caractère est toujours affichable 
+        while scan < len(l) - 1 and pyg.font.Font.size(self.font, l[:scan])[0] < self.write_zone_rect.width:
+            # Si le caractère est un espace
+            if l[scan] == ' ':
+                # On trace temporairement la coupe à l'index de l'espace
+                cut = scan
+            # On regarde pour le caractère suivant
+            scan += 1
+        # On retourne la première partie affichable de la chaîne de caractère, et on appelle cette même méthode sur le reste de la chaîne dans le cas où la deuxième partie n'est pas affichable
+        return [l[:cut]] + self.list_slice(l[cut+1:])    
         
-        # Si toutes les lignes n'ont pas encore été entièrement affichées
-        if len(self.current_dialog) != len(self.current_dialog[:self.current_line_number]):
-            # On affiche la ligne en cours d'affichage caractère par caractère
-            self.draw_line_progressive()
-        # Affiche en continu la ligne en cours d'affichage (sinon l'affichage discontinu)
-        self.draw_line(self.current_line, self.current_line_number)
-    
     # Méthode de base pour afficher une ligne de texte
     def draw_line(self, line, line_number):
         # On créé une surface (=image) contenant le texte à afficher
         line_to_print = self.font.render(line, 1, noir)
         # On affiche ce "rendu" du texte dans la zone d'écriture et à la bonne ligne
-        screen.blit(line_to_print, (self.write_zone_rect.x, self.write_zone_rect.y + line_number * self.line_size))
+        screen.blit(line_to_print, (self.write_zone_rect.x, self.write_zone_rect.y + line_number * self.line_height))
     
     # Méthode affichant la ligne en cours caractère par caractère
     def draw_line_progressive(self):
@@ -250,30 +259,28 @@ class Dialogbox:
             self.current_line_number += 1   # On passe à la ligne suivante
             self.current_line = ''          # La prochaine ligne est pour l'instant vide
             self.charindex = 0              # Le prochain caractère à afficher sera le tout premier de la prochaine ligne
-            
-    '''
-    # méthode pour couper les lignes de dialogues au niveau du dernier espace si elles sont trop longues
-    def dict_slice(self):
-        for x in self.dialogdict.values():
-            z = int(self.safezone_rect.width)
-            #x = [i[j:j+z] for i in x for j in range(0, len(i), z)]
-            for y in range(len(x)):
-                self.list_slice(x, y)
-                
-    def list_slice(self, x, y):
-        if x[y].size()[0] > self.safezone_rect.width:
-            z = int(self.safezone_rect.width)
-            tourne = True
-            while z >= 0 and tourne:
-                if self.dialogline[x] == ' ':
-                    saut = z
-                    tourne = False
-                z -= 1
-            x[y] = x[:saut]
-            x.insert(x[saut+1:], y+1)
-    '''
+    
+    def draw_all_lines(self):
+        # On affiche les lignes qu'on a fini d'afficher
+        for x in range(len(self.current_dialog[:self.current_line_number])):
+            self.draw_line(self.current_dialog[x], x)
         
-
+        # Si toutes les lignes n'ont pas encore été entièrement affichées
+        if len(self.current_dialog) != len(self.current_dialog[:self.current_line_number]):
+            # On affiche la ligne en cours d'affichage caractère par caractère
+            self.draw_line_progressive()
+        # Affiche en continu la ligne en cours d'affichage (sinon l'affichage discontinu)
+        self.draw_line(self.current_line, self.current_line_number)
+        
+    # Méthode pour afficher la boîte de dialogue dans son entiereté, la boîte et le texte à l'intérieur
+    def draw(self):
+        # On affiche la boîte de dialogue et la zone d'affichage du texte
+        ''' TEMPORAIRE, à remplacer par screen.blit(self.image, (self.x, self.y)) '''
+        pyg.draw.rect(screen, noir, self.dialogbox_rect, 1)
+        pyg.draw.rect(screen, rouge, self.write_zone_rect, 1)
+        
+        self.draw_all_lines()
+        
 # Fonction pour quitter la fenêtre et arrêter l'exécution du programme
 def quit():
     run  = False
@@ -365,16 +372,16 @@ spritelist = [[[img0_1, img0_2, img0_3], [img0_1_alpha, img0_2_alpha, img0_3_alp
               [img4_1, img4_2, img4_3],
               [img5_1, img5_2, img5_3]]]
 
+textdict = {'feur': ['Ah bon bah quand même!', 'C" est quand même con d''utiliser de si mauvais placeholders quelle idée de merde franchement', 'OMORI est un très mauvais jeu, on ne peux faire plus gay qu"OMORI, c"est strictement possible, personnellement je déteste OMORI, particulièrement toute la partie avec Humphrey qui est sincèrement une horreur d"un point de vue game-design, une horreur vraiment. Pourtant les Slimegirls sont grave baisables mais je suis arrêté par le simple ennui de cette zone du jeu. Deeper Well juste avant était bien plus intéressant bien que snas gameplay vraiment je me répète, c"est un placeholder AAAAAAAAAAAAAHHH']}
+
 # Création des instances menu des menus coulissants du jeu
 menu1 = Menu(height//4, spritelist)
 menu2 = Menu(height//2, spritelist)
 menu3 = Menu(3*height//4, spritelist)
 
-textdict = {'win': ['[placeholder]', '[placeholder][placeholder][placeholder]', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaa[placeholder]aaaaaaaaaaaaaaaaaaaaaaaaaaa']}
+test_dialogbox = Dialogbox(width//2, height//2, 50, 50, textdict)
+test_dialogbox.current_dialog = test_dialogbox.dialogdict['feur']
 
-a = Dialogbox(width//2, height//2, 50, 50, textdict)
-#a.dialogbox_rect.center = (width//2, height//2)
-a.current_dialog = textdict['win']
 b = 0
 
 # Booléen dont dépend la boucle de jeu
@@ -389,7 +396,7 @@ while run:
     # Fond blanc (pour l'instant)
     screen.fill(blanc)
     
-    a.draw()
+    test_dialogbox.draw()
     
     # Tableau de l'état du clic gauche
     mousestate = [mousestate[1], pyg.mouse.get_pressed()[0]]

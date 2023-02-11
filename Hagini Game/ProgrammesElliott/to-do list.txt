@@ -1,8 +1,11 @@
 Partie menu:
-- coupe des lignes de dialogue pour qu'elles rentrent dans la boîte de dialogue +++ taille de la police en fonction de la taille de l'écran 
-- reformer spritelist pour qu'elle soit compréhensible
+  Boîte de dialogue:
+    - taille de la police en fonction de la taille de l'écran
+    - méthode pour gérer les dialogues de anière situationnelle (si x alors passer sur tel dialogue)
+  Menu:
+    - reformer spritelist pour qu'elle soit compréhensible
 - Menu statistiques, création de nouvellee classes de données (dataclasses) pour les pièces du véhicule
-- Affichage de M. Latour et boîte de dialogues, avec apparition progressive des lettres du texte
+- Affichage de M. Latour
 - Affichage du véhicule, positionnement des images sélectionnées les unes sur les autres (= assemblage visuel du véhicule)
 - Disposition menu déroulant, menu statistiques, menu dialogue et affichage du véhicule
 - Timer pour que le joueur ne reste pas trop longtemps dans les menus?
