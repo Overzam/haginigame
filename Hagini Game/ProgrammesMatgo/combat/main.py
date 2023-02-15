@@ -821,6 +821,8 @@ while running:
 
             screen.blit(fleche, (game.playerII.rect.x + 55, game.playerII.rect.y - 10))
 
+            pos_base = game.player.rect.x
+
             g_or_d = random.randint(1,2)                                                                   # mouvement aléatoire du bot
             #print(momentum)
             if g_or_d == 1:
@@ -969,6 +971,16 @@ while running:
                 print(n)
 
             elif game.pressed.get(pygame.K_d) and game.playerII.rect.x + game.playerII.rect.width < screen.get_width():
+                momentum_back = random.randint(1,25)                                                                        # le bot recule qd on recule
+                if momentum_back == 1:
+                    move = random.randint(1,5)
+                    game.player.rect.x = pos_base
+                    for i in range(move):
+                        if game.player.rect.x == 1:
+                            game.player.rect.x = 1
+                        game.player.rect.x += 1
+                        game.player.move_right()
+
                 game.playerII.move_right()
                 p1 = game.player.rect.x
                 p2 = game.playerII.rect.x
@@ -1076,6 +1088,26 @@ while running:
                             player.exp = 100
                     n += 1
                 '''
+            p1 = game.player.rect.x
+            p2 = game.playerII.rect.x
+            if p2 - p1 <= ECART2:
+                momentum_coup = random.randint(1,50)
+                if momentum_coup == 1:                                                                      # coup de poings bot
+                    playerII.health -= 1
+                    player.exp -= 1.5
+                    if premier_personnage == 1:
+                        screen.blit(pygame.image.load("Assets/1/1coup.png"), game.player.rect)
+                    elif premier_personnage == 2:
+                        screen.blit(pygame.image.load("Assets/2/2coup.png"), game.player.rect)
+                    elif premier_personnage == 3:
+                        screen.blit(pygame.image.load("Assets/3/3coup.png"), game.player.rect)
+                        if p2 - p1 <= ECART2:
+                            player.health -= 0.1
+                elif player.exp < 0:
+                    player.exp = 100
+                n += 1
+
+
 
             if player.health <= 0:
                 victoire_deuxieme_personnage += 1
