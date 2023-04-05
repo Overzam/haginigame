@@ -352,4 +352,3 @@ if perdu:
 
 if bonnne_rep:
     victoire()
-
