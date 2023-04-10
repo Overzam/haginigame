@@ -20,7 +20,7 @@ import random
 pyg.init()
 
 pyg.display.set_caption("FightinGODS")
-screen = pyg.display.set_mode((750,420), pyg.RESIZABLE)
+screen = pyg.display.set_mode((1920,1080))
 
 '''Definition'''
 '''page d'accueil'''
@@ -35,12 +35,16 @@ Fond_erreur = pyg.image.load("Assets/solomode.png")
 fleche = pyg.image.load("Assets/fleche.png")
 
 ordi = pyg.image.load("Assets/ordi.png")
+barre = pyg.image.load("Assets/barre.png")
 
 cooldown_coup = -1
 
 moment_move = 0
 
 momentum = 0
+
+game_offset_x = 100
+game_offset_y = 100
 
 def countdown(num_of_secs):
     while num_of_secs:
@@ -53,23 +57,23 @@ def countdown(num_of_secs):
     print('Countdown finished.')
 
 def FondAccueil():
-    screen.blit(Fond_accueil, (0, 0))
+    screen.blit(Fond_accueil, (0 + game_offset_x, 0 + game_offset_y))
 
 def Fonderreur():
-    screen.blit(Fond_erreur, (0, 0))
+    screen.blit(Fond_erreur, (0 + game_offset_x, 0 + game_offset_y))
 
 def FondCommande():
-    screen.blit(Fond_Commande, (0, 0))
+    screen.blit(Fond_Commande, (0 + game_offset_x, 0 + game_offset_y))
 
 def FondTru():
-    screen.blit(Fond_instru, (0, 0))
+    screen.blit(Fond_instru, (0 + game_offset_x, 0 + game_offset_y))
 
 
 play_button = pyg.image.load("Assets/IMG-0694.PNG")
 play_button = pyg.transform.scale(play_button, (200, 92))
 play_button_rect = play_button.get_rect()
-play_button_rect.x = math.ceil(280)
-play_button_rect.y = math.ceil(190)
+play_button_rect.x = math.ceil(280)  + game_offset_x
+play_button_rect.y = math.ceil(190) + game_offset_y
 
 
 def Bouton_de_jeu():
@@ -79,8 +83,8 @@ def Bouton_de_jeu():
 option_button = pyg.image.load("Assets/boption.png")
 option_button = pyg.transform.scale(option_button, (60, 60))
 option_button_rect = option_button.get_rect()
-option_button_rect.x = math.ceil(690)
-option_button_rect.y = math.ceil(360)
+option_button_rect.x = math.ceil(690)  + game_offset_x
+option_button_rect.y = math.ceil(360) + game_offset_y
 
 
 def optionButton():
@@ -90,8 +94,8 @@ def optionButton():
 commande_button = pyg.image.load("Assets/instru.png")
 commande_button = pyg.transform.scale(commande_button, (100, 46))
 commande_button_rect = commande_button.get_rect()
-commande_button_rect.x = math.ceil(650)
-commande_button_rect.y = math.ceil(10)
+commande_button_rect.x = math.ceil(650)  + game_offset_x
+commande_button_rect.y = math.ceil(10) + game_offset_y
 
 def commandebutton():
     screen.blit(commande_button, commande_button_rect)
@@ -101,8 +105,8 @@ def commandebutton():
 instru_button = pyg.image.load("Assets/IMG-0695.PNG")
 instru_button = pyg.transform.scale(instru_button, (100, 46))
 instru_button_rect = instru_button.get_rect()
-instru_button_rect.x = math.ceil(screen.get_width() / 2.5)
-instru_button_rect.y = math.ceil(screen.get_height() / 2.1)
+instru_button_rect.x = math.ceil(screen.get_width() / 2.5)  + game_offset_x
+instru_button_rect.y = math.ceil(screen.get_height() / 2.1) + game_offset_y
 
 
 
@@ -115,8 +119,8 @@ def instrubutton():
 solo_button = pyg.image.load("Assets/solo.png")
 solo_button = pyg.transform.scale(solo_button, (200, 92))
 solo_button_rect = solo_button.get_rect()
-solo_button_rect.x = math.ceil(280)
-solo_button_rect.y = math.ceil(180)
+solo_button_rect.x = math.ceil(280) + game_offset_x
+solo_button_rect.y = math.ceil(180) + game_offset_y
 
 def solobutton():
     screen.blit(solo_button, solo_button_rect)
@@ -124,8 +128,8 @@ def solobutton():
 deux_button = pyg.image.load("Assets/deuxjoueurs.png")
 deux_button = pyg.transform.scale(deux_button, (200, 92))
 deux_button_rect = deux_button.get_rect()
-deux_button_rect.x = math.ceil(280)
-deux_button_rect.y = math.ceil(300)
+deux_button_rect.x = math.ceil(280) + game_offset_x
+deux_button_rect.y = math.ceil(300) + game_offset_y
 
 def DeuxJoueurs():
     screen.blit(deux_button, deux_button_rect)
@@ -133,54 +137,54 @@ def DeuxJoueurs():
 deux_Button = pyg.image.load("Assets/deuxjoueurs.png")
 deux_Button = pyg.transform.scale(deux_Button, (100, 46))
 deux_Button_rect = deux_Button.get_rect()
-deux_Button_rect.x = math.ceil(280)
-deux_Button_rect.y = math.ceil(300)
+deux_Button_rect.x = math.ceil(280) + game_offset_x
+deux_Button_rect.y = math.ceil(300) + game_offset_y
 
 def deuxjoueurs():
     screen.blit(deux_Button, deux_Button_rect)
 
 def Fond_joueurP():
-    screen.blit(Fond_accueil, (0, 0))
+    screen.blit(Fond_accueil, (0 + game_offset_x, 0 + game_offset_y))
     
 def Fond_selectJ():
-    screen.blit(Fond_Round, (0, 0))
+    screen.blit(Fond_Round, (0 + game_offset_x, 0 + game_offset_y))
     
 
 
 def Fond_joueurD():
-    screen.blit(Fond_accueil, (0, 0))
+    screen.blit(Fond_accueil, (0 + game_offset_x, 0 + game_offset_y))
     
 
 
 def Fond_round():
-    screen.blit(Fond_Round, (0, 0))
+    screen.blit(Fond_Round, (0 + game_offset_x, 0 + game_offset_y))
     
 def Fond_commande():
-    screen.blit(Fond_Round, (0, 0))    
+    screen.blit(Fond_Round, (0 + game_offset_x, 0 + game_offset_y))    
 
 
 def Fond_d_option():
-    screen.blit(OptionFond, (0, 0))
+    screen.blit(OptionFond, (0 + game_offset_x, 0 + game_offset_y))
 
 backgroundPS = pyg.image.load("Assets/IMG-0705.PNG")
 
 
 def background_Premiere_Selection():
-    screen.blit(backgroundPS, (0, 0))
+    screen.blit(backgroundPS, (0 + game_offset_x, 0 + game_offset_y))
 
 
 backgroundDS = pyg.image.load("Assets/IMG-0706.PNG")
 
 
 def background_Deuxieme_Selection():
-    screen.blit(backgroundDS, (0, 0))
+    screen.blit(backgroundDS, (0 + game_offset_x, 0 + game_offset_y))
 
 
 premierPerso = pyg.image.load("Assets/FOURENS.png")
 premierPerso = pyg.transform.scale(premierPerso, (138, 320))
 premierPerso_rect = premierPerso.get_rect()
-premierPerso_rect.x = math.ceil(50)
-premierPerso_rect.y = math.ceil(70)
+premierPerso_rect.x = math.ceil(50) + game_offset_x
+premierPerso_rect.y = math.ceil(70) + game_offset_y
 
 
 def premierPersonnage():
@@ -190,8 +194,8 @@ def premierPersonnage():
 deuxiemePerso = pyg.image.load("Assets/deuxieme_personnage.png")
 deuxiemePerso = pyg.transform.scale(deuxiemePerso, (138, 217))
 deuxiemePerso_rect = deuxiemePerso.get_rect()
-deuxiemePerso_rect.x = math.ceil(300)
-deuxiemePerso_rect.y = math.ceil(120)
+deuxiemePerso_rect.x = math.ceil(300) + game_offset_x
+deuxiemePerso_rect.y = math.ceil(120) + game_offset_y
 
 
 def deuxiemePersonnage():
@@ -201,8 +205,8 @@ def deuxiemePersonnage():
 troisiemePerso = pyg.image.load("Assets/troisieme_personnage.png")
 troisiemePerso = pyg.transform.scale(troisiemePerso, (138, 304))
 troisiemePerso_rect = troisiemePerso.get_rect()
-troisiemePerso_rect.x = math.ceil(550)
-troisiemePerso_rect.y = math.ceil(70)
+troisiemePerso_rect.x = math.ceil(550) + game_offset_x
+troisiemePerso_rect.y = math.ceil(70) + game_offset_y
 
 
 def troisiemePersonnage():
@@ -213,8 +217,8 @@ def troisiemePersonnage():
 roundP = pyg.image.load("Assets/tif/Pround.PNG")
 roundP = pyg.transform.scale(roundP, (150, 150))
 roundP_rect = roundP.get_rect()
-roundP_rect.x = math.ceil(100)
-roundP_rect.y = math.ceil(150)
+roundP_rect.x = math.ceil(100) + game_offset_x
+roundP_rect.y = math.ceil(150) + game_offset_y
 
 
 def ROUNDP():
@@ -223,8 +227,8 @@ def ROUNDP():
 roundD = pyg.image.load("Assets/Dround.PNG")
 roundD = pyg.transform.scale(roundD, (150, 150))
 roundD_rect = roundP.get_rect()
-roundD_rect.x = math.ceil(300)
-roundD_rect.y = math.ceil(150)
+roundD_rect.x = math.ceil(300) + game_offset_x
+roundD_rect.y = math.ceil(150) + game_offset_y
 
 
 def ROUNDD():
@@ -233,8 +237,8 @@ def ROUNDD():
 roundT = pyg.image.load("Assets/tif/Tround.PNG")
 roundT = pyg.transform.scale(roundT, (150, 150))
 roundT_rect = roundT.get_rect()
-roundT_rect.x = math.ceil(500)
-roundT_rect.y = math.ceil(150)
+roundT_rect.x = math.ceil(500) + game_offset_x
+roundT_rect.y = math.ceil(150) + game_offset_y
 
 
 def ROUNDT():
@@ -247,7 +251,7 @@ backgroundCP = pyg.transform.scale(backgroundCP, (750, 420))
 
 
 def backgroundCPremier():
-    screen.blit(backgroundCP, (0, 0))
+    screen.blit(backgroundCP, (0 + game_offset_x, 0 + game_offset_y))
 
 
 backgroundCD = pyg.image.load("Assets/fond_jeu.jpg")
@@ -255,7 +259,7 @@ backgroundCD = pyg.transform.scale(backgroundCD, (750, 420))
 
 
 def backgroundCDeuxieme():
-    screen.blit(backgroundCD, (0, 0))
+    screen.blit(backgroundCD, (0 + game_offset_x, 0 + game_offset_y))
 
 
 
@@ -291,8 +295,8 @@ class Player(pyg.sprite.Sprite):
         self.image = pyg.image.load("Assets/2/2.png")
         self.image2 = pyg.image.load("Assets/2/2coup.png")
         self.rect = self.image.get_rect()
-        self.rect.x = 255
-        self.rect.y = 160
+        self.rect.x = 255 + game_offset_x
+        self.rect.y = 160 + game_offset_y
 
     def damage(self, amount):
         # infliger dégâts
@@ -368,8 +372,8 @@ class PlayerII(pyg.sprite.Sprite):
         self.image = pyg.image.load('Assets/3r/3r.png')
         self.image2 = pyg.image.load('Assets/3r/3coupr.png')
         self.rect = self.image.get_rect()
-        self.rect.x = 445
-        self.rect.y = 153
+        self.rect.x = 445 + game_offset_x
+        self.rect.y = 153 + game_offset_y
 
     def update_health_bar(self, surface):
         # couleur jauge ( rouge)
@@ -424,17 +428,17 @@ background_Egalite = pyg.image.load("Assets/Fin-Egalite.png")
 
 
 def Fond_de_fin():
-    screen.blit(background_Fin, (0, 0))
+    screen.blit(background_Fin, (0 + game_offset_x, 0 + game_offset_y))
 
 def Fond_Egalite():
-    screen.blit(background_Egalite, (0, 0))
+    screen.blit(background_Egalite, (0 + game_offset_x, 0 + game_offset_y))
 
 
 Button_continuer = pyg.image.load("Assets/IMG-0693.PNG")
 Button_continuer = pyg.transform.scale(Button_continuer, (150, 85))
 Button_continuer_rect = Button_continuer.get_rect()
-Button_continuer_rect.x = math.ceil(560)
-Button_continuer_rect.y = math.ceil(300)
+Button_continuer_rect.x = math.ceil(560) + game_offset_x
+Button_continuer_rect.y = math.ceil(300) + game_offset_y
 
 
 def button_continuer():
@@ -444,8 +448,8 @@ def button_continuer():
 image_KO = pyg.image.load("Assets/IMG-0702.PNG")
 image_KO = pyg.transform.scale(image_KO, (400, 400))
 image_KO_rect = Button_continuer.get_rect()
-image_KO_rect.x = math.ceil(168)
-image_KO_rect.y = math.ceil(62.5)
+image_KO_rect.x = math.ceil(168) + game_offset_x
+image_KO_rect.y = math.ceil(62.5) + game_offset_y
 
 
 def KO():
@@ -455,8 +459,8 @@ def KO():
 bouton_rejouer = pyg.image.load("Assets/IMG-0695.PNG")
 bouton_rejouer = pyg.transform.scale(bouton_rejouer, (150, 70))
 bouton_rejouer_rect = bouton_rejouer.get_rect()
-bouton_rejouer_rect.x = math.ceil(70)
-bouton_rejouer_rect.y = math.ceil(326)
+bouton_rejouer_rect.x = math.ceil(70) + game_offset_x
+bouton_rejouer_rect.y = math.ceil(326) + game_offset_y
 
 
 def button_rejouer():
@@ -466,8 +470,8 @@ def button_rejouer():
 bouton_menu = pyg.image.load("Assets/IMG-0696.PNG")
 bouton_menu = pyg.transform.scale(bouton_menu, (150, 70))
 bouton_menu_rect = bouton_menu.get_rect()
-bouton_menu_rect.x = math.ceil(500)
-bouton_menu_rect.y = math.ceil(326)
+bouton_menu_rect.x = math.ceil(500) + game_offset_x
+bouton_menu_rect.y = math.ceil(326) + game_offset_y
 
 
 def button_menu():
@@ -477,8 +481,8 @@ def button_menu():
 premier_perso_fin_victoire = pyg.image.load("Assets/Fin_du_match_premier_perso.png")
 premier_perso_fin_victoire = pyg.transform.scale(premier_perso_fin_victoire, (180, 180))
 premier_perso_fin_victoire_rect = premier_perso_fin_victoire.get_rect()
-premier_perso_fin_victoire_rect.x = math.ceil(60)
-premier_perso_fin_victoire_rect.y = math.ceil(131)
+premier_perso_fin_victoire_rect.x = math.ceil(60) + game_offset_x
+premier_perso_fin_victoire_rect.y = math.ceil(131) + game_offset_y
 
 
 def Fin_premier_perso_victoire():
@@ -488,8 +492,8 @@ def Fin_premier_perso_victoire():
 deuxieme_perso_fin_victoire = pyg.image.load("Assets/Fin_du_match_deuxieme_perso.png")
 deuxieme_perso_fin_victoire = pyg.transform.scale(deuxieme_perso_fin_victoire, (180, 180))
 deuxieme_perso_fin_victoire_rect = deuxieme_perso_fin_victoire.get_rect()
-deuxieme_perso_fin_victoire_rect.x = math.ceil(60)
-deuxieme_perso_fin_victoire_rect.y = math.ceil(131)
+deuxieme_perso_fin_victoire_rect.x = math.ceil(60) + game_offset_x
+deuxieme_perso_fin_victoire_rect.y = math.ceil(131) + game_offset_y
 
 
 def Fin_deuxieme_perso_victoire():
@@ -499,8 +503,8 @@ def Fin_deuxieme_perso_victoire():
 troisieme_perso_fin_victoire = pyg.image.load("Assets/Fin_du_match_troisieme_perso.png")
 troisieme_perso_fin_victoire = pyg.transform.scale(troisieme_perso_fin_victoire, (180, 180))
 troisieme_perso_fin_victoire_rect = troisieme_perso_fin_victoire.get_rect()
-troisieme_perso_fin_victoire_rect.x = math.ceil(60)
-troisieme_perso_fin_victoire_rect.y = math.ceil(131)
+troisieme_perso_fin_victoire_rect.x = math.ceil(60) + game_offset_x
+troisieme_perso_fin_victoire_rect.y = math.ceil(131) + game_offset_y
 
 
 def Fin_troisieme_perso_victoire():
@@ -510,8 +514,8 @@ def Fin_troisieme_perso_victoire():
 premier_perso_fin_defaite = pyg.image.load("Assets/Fin_du_match_premier_perso.png")
 premier_perso_fin_defaite = pyg.transform.scale(premier_perso_fin_defaite, (180, 180))
 premier_perso_fin_defaite_rect = premier_perso_fin_defaite.get_rect()
-premier_perso_fin_defaite_rect.x = math.ceil(468.75)
-premier_perso_fin_defaite_rect.y = math.ceil(131)
+premier_perso_fin_defaite_rect.x = math.ceil(468.75) + game_offset_x
+premier_perso_fin_defaite_rect.y = math.ceil(131) + game_offset_y
 
 
 def Fin_premier_perso_defaite():
@@ -521,8 +525,8 @@ def Fin_premier_perso_defaite():
 deuxieme_perso_fin_defaite = pyg.image.load("Assets/Fin_du_match_deuxieme_perso.png")
 deuxieme_perso_fin_defaite = pyg.transform.scale(deuxieme_perso_fin_defaite, (180, 180))
 deuxieme_perso_fin_defaite_rect = deuxieme_perso_fin_defaite.get_rect()
-deuxieme_perso_fin_defaite_rect.x = math.ceil(468.75)
-deuxieme_perso_fin_defaite_rect.y = math.ceil(131)
+deuxieme_perso_fin_defaite_rect.x = math.ceil(468.75) + game_offset_x
+deuxieme_perso_fin_defaite_rect.y = math.ceil(131) + game_offset_y
 
 
 def Fin_deuxieme_perso_defaite():
@@ -532,8 +536,8 @@ def Fin_deuxieme_perso_defaite():
 troisieme_perso_fin_defaite = pyg.image.load("Assets/Fin_du_match_troisieme_perso.png")
 troisieme_perso_fin_defaite = pyg.transform.scale(troisieme_perso_fin_defaite, (180, 180))
 troisieme_perso_fin_defaite_rect = troisieme_perso_fin_victoire.get_rect()
-troisieme_perso_fin_defaite_rect.x = math.ceil(468.75)
-troisieme_perso_fin_defaite_rect.y = math.ceil(131)
+troisieme_perso_fin_defaite_rect.x = math.ceil(468.75) + game_offset_x
+troisieme_perso_fin_defaite_rect.y = math.ceil(131) + game_offset_y
 
 
 def Fin_troisieme_perso_defaite():
@@ -572,6 +576,7 @@ Fond = 1
 while running:
 
     screen.blit(ordi, (0, 0))
+    screen.blit(barre, (game_offset_x, game_offset_y - 28))
 
     while PageAccueil:
         FondAccueil()
