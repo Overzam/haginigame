@@ -576,7 +576,7 @@ Fond = 1
 while running:
 
     screen.blit(ordi, (0, 0))
-    screen.blit(barre, (game_offset_x, game_offset_y - 28))
+    #screen.blit(barre, (game_offset_x, game_offset_y - 28))
 
     while PageAccueil:
         FondAccueil()
@@ -820,6 +820,8 @@ while running:
         Fond += 1
 
         selecCOMBAT = True
+        
+        screen.blit(ordi, (0,0))
 
         # boucle si vrai
         while selecCOMBAT:
@@ -856,8 +858,6 @@ while running:
                                 game.player.rect.x = 1
                             game.player.rect.x += 1
                             game.player.move_right()
-            
-
 
             if deuxieme_personnage == 1:
                 personnage_de_droite_garde = pyg.image.load("Assets/1r/1r.png")
@@ -895,9 +895,6 @@ while running:
                     selecCOMBAT = False
                     selecCombat = False
                     dead = True
-            
-            if game.player.rect.x < 0:
-                game.player.rect.x = 0
             
             if game.player.rect.x > game.playerII.rect.x - 50:                                                        # empecher le bot d'aller derriere le joueur
                 game.player.rect.x = game.playerII.rect.x - 50
@@ -972,7 +969,8 @@ while running:
                 if p1 < 1:
                      game.player.rect.x = 0
 
-
+                if game.player.rect.x < game_offset_x + 50:
+                    game.player.rect.x = game_offset_x + 50
 
                 print('p1:')
                 print(game.player.rect.x)
@@ -981,7 +979,7 @@ while running:
                 print('n:')
                 print(n)
 
-            elif game.pressed.get(pyg.K_d) and game.playerII.rect.x + game.playerII.rect.width < screen.get_width():
+            elif game.pressed.get(pyg.K_d) and game.playerII.rect.x + game.playerII.rect.width < game_offset_x + 750:
                 momentum_back = random.randint(1,25)                                                                        # le bot recule qd on recule
                 if momentum_back == 1:
                     move = random.randint(1,5)
@@ -1059,6 +1057,7 @@ while running:
                         elif playerII.exp < 0:
                             playerII.exp = 100
                         n += 1
+
                 '''
                 if p2 - p1 <= ECART and (n % 2) == 0:
                     p1 = game.player.rect.x
