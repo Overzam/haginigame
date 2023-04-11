@@ -1,8 +1,0 @@
-idee snake
-
-cadenas qui te dit ou t'en es dans la progression du hack
-
-un truc qui te dit les touches
-
-quand perd une premiere fois recommence niveau quand perd une autre fois recommence le hack, 
-ou erreur pas grave recommence niveau mais 3 erreur recommence le hack
