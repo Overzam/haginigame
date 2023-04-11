@@ -43,8 +43,8 @@ moment_move = 0
 
 momentum = 0
 
-game_offset_x = 100
-game_offset_y = 100
+game_offset_x = 500
+game_offset_y = 500
 
 def countdown(num_of_secs):
     while num_of_secs:
