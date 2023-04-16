@@ -43,8 +43,8 @@ moment_move = 0
 
 momentum = 0
 
-game_offset_x = 500
-game_offset_y = 500
+game_offset_x = 100
+game_offset_y = 100
 
 def countdown(num_of_secs):
     while num_of_secs:
@@ -547,7 +547,7 @@ def Fin_troisieme_perso_defaite():
 '''Jeu'''
 
 running = True
-PageAccueil = True
+PageAccueil = False
 Option = False
 Commande = False
 Instru = False
@@ -559,15 +559,15 @@ selecROUND = False
 Fin_de_combat = False
 dead = False
 Combat = False
-selecCombat = False
+selecCombat = True
 COMBAT = False
 selecCOMBAT = False
 ROUND = False
 Jeu = False
 DeuxJ = False
-premier_personnage = 0
-deuxieme_personnage = 0
-nb_de_round = 0
+premier_personnage = 1
+deuxieme_personnage = 2
+nb_de_round = 1
 nb_de_combat = 0
 victoire_premier_personnage = 0
 victoire_deuxieme_personnage = 0
@@ -809,6 +809,10 @@ while running:
 
 
     while selecCombat:
+
+        screen.blit(ordi, (0,0))
+        barre = pyg.transform.scale(barre, (750,28))
+        screen.blit(barre, (game_offset_x, game_offset_y - 28))
         # generer le jeu
         game = Game()
 
@@ -896,9 +900,9 @@ while running:
                     selecCombat = False
                     dead = True
             
+
             if game.player.rect.x > game.playerII.rect.x - 50:                                                        # empecher le bot d'aller derriere le joueur
                 game.player.rect.x = game.playerII.rect.x - 50
-
     
             # joueur2 -> gauche ou droite
             if game.pressed.get(pyg.K_q) and game.playerII.rect.x > 0:
@@ -1015,6 +1019,9 @@ while running:
                 print(game.player.rect.x)
                 print('p2:')
                 print(game.playerII.rect.x)
+
+            if game.playerII.rect.x > game_offset_x + 650:
+                game.playerII.rect.x = game_offset_x + 650
 
             #main
             elif game.pressed.get(pyg.K_z):
@@ -1157,6 +1164,16 @@ while running:
 
 
     while dead:
+        screen.blit(ordi, (0,0))
+        for event in pyg.event.get():
+            if event.type == pyg.QUIT:
+                Option = False
+                running = False
+        pyg.display.flip()
+
+        '''
+        barre = pyg.transform.scale(barre, (765,28))
+        screen.blit(barre, (game_offset_x, game_offset_y - 28))
         FondAccueil()
         button_continuer()
         KO()
@@ -1169,7 +1186,10 @@ while running:
             if event.type == pyg.QUIT:
                 Option = False
                 running = False
+        '''
+        
 
+                
     while Fin_de_combat:
         if victoire_premier_personnage > victoire_deuxieme_personnage:
             if premier_personnage == 1:
@@ -1385,10 +1405,7 @@ while running:
             if event.type == pyg.QUIT:
                 Fin_de_combat = False
                 running = False
-
-
-    
-    
+        
     
     while Combat:
 
