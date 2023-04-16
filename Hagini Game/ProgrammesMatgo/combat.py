@@ -43,8 +43,8 @@ moment_move = 0
 
 momentum = 0
 
-game_offset_x = 100
-game_offset_y = 100
+game_offset_x = 200
+game_offset_y = 200
 
 def countdown(num_of_secs):
     while num_of_secs:
@@ -922,54 +922,7 @@ while running:
                         for i in range(ran_move):
                             game.player.rect.x -= 1
                             game.player.move_left()
-                        '''
-                        for i in range(25):
-                            game.player.rect.x -= 1
-                            game.player.move_left()
-                        '''
                         n +=1
-                    '''
-                    else:
-                        p1 = game.player.rect.x
-                        p2 = game.playerII.rect.x
-                        if premier_personnage == 1:
-                            screen.blit(pygame.image.load("Assets/1/1coup.png"), game.player.rect)
-                        elif premier_personnage == 2:
-                            screen.blit(pygame.image.load("Assets/2/2coup.png"), game.player.rect)
-                        elif premier_personnage == 3:
-                            screen.blit(pygame.image.load("Assets/3/3coup.png"), game.player.rect)
-                        if p2 - p1 <= ECART2:
-                            if game.pressed.get(pygame.K_a):
-                                playerII.health -= 0.1
-                                player.exp -= 1.5
-                                if player.exp <= 10 and player.exp >= 0:
-                                    if premier_personnage == 1:
-                                        screen.blit(pygame.image.load("Assets/mainP.png"), game.player.rect)
-                                    elif premier_personnage == 2:
-                                        screen.blit(pygame.image.load("Assets/mainSD.png"), game.player.rect)
-                                    elif premier_personnage == 3:
-                                        screen.blit(pygame.image.load("Assets/mainST.png"), game.player.rect)
-                                        if p2 - p1 <= ECART2:
-                                            playerII.health -= 1
-                                elif player.exp < 0:
-                                    player.exp = 100
-                            
-                            else:
-                                playerII.health -= 1.5
-                                player.exp -= 2
-                                if player.exp <= 10 and player.exp >= 0:
-                                    if premier_personnage == 1:
-                                        screen.blit(pygame.image.load("Assets/mainP.png"), game.player.rect)
-                                    elif premier_personnage == 2:
-                                        screen.blit(pygame.image.load("Assets/mainSD.png"), game.player.rect)
-                                    elif premier_personnage == 3:
-                                        screen.blit(pygame.image.load("Assets/mainST.png"), game.player.rect)
-                                        if p2 - p1 <= ECART2:
-                                            playerII.health -= 2
-                                elif player.exp < 0:
-                                    player.exp = 100
-                            '''
-                        #n += 1
                 if p1 < 1:
                      game.player.rect.x = 0
 
@@ -1065,46 +1018,6 @@ while running:
                             playerII.exp = 100
                         n += 1
 
-                '''
-                if p2 - p1 <= ECART and (n % 2) == 0:
-                    p1 = game.player.rect.x
-                    p2 = game.playerII.rect.x
-                    if premier_personnage == 1:
-                        screen.blit(pygame.image.load("Assets/1/1coup.png"), game.player.rect)
-                    elif premier_personnage == 2:
-                        screen.blit(pygame.image.load("Assets/2/2coup.png"), game.player.rect)
-                    elif premier_personnage == 3:
-                        screen.blit(pygame.image.load("Assets/3/3coup.png"), game.player.rect)
-                    if game.pressed.get(pygame.K_i):
-                        playerII.health -= 0.001
-                        player.exp -= 0.05
-                        if player.exp <= 10 and player.exp >= 0:
-                            if premier_personnage == 1:
-                                screen.blit(pygame.image.load("Assets/mainP.png"), game.player.rect)
-                            elif premier_personnage == 2:
-                                screen.blit(pygame.image.load("Assets/mainSD.png"), game.player.rect)
-                            elif premier_personnage == 3:
-                                screen.blit(pygame.image.load("Assets/mainST.png"), game.player.rect)
-                                if p2 - p1 <= ECART:
-                                    playerII.health -= 0.05
-                        elif player.exp < 0:
-                            player.exp = 100
-                    else:
-                        playerII.health -= 0.01
-                        player.exp -= 0.05
-                        if player.exp <= 10 and player.exp >= 0:
-                            if premier_personnage == 1:
-                                screen.blit(pygame.image.load("Assets/mainP.png"), game.player.rect)
-                            elif premier_personnage == 2:
-                                screen.blit(pygame.image.load("Assets/mainSD.png"), game.player.rect)
-                            elif premier_personnage == 3:
-                                screen.blit(pygame.image.load("Assets/mainST.png"), game.player.rect)
-                                if p2 - p1 <= ECART:
-                                    playerII.health -= 0.1
-                        elif player.exp < 0:
-                            player.exp = 100
-                    n += 1
-                '''
             p1 = game.player.rect.x
             p2 = game.playerII.rect.x
             if p2 - p1 <= ECART2:
@@ -1167,8 +1080,8 @@ while running:
         screen.blit(ordi, (0,0))
         for event in pyg.event.get():
             if event.type == pyg.QUIT:
-                Option = False
-                running = False
+                dead = False
+                running  = False
         pyg.display.flip()
 
         '''
@@ -1467,30 +1380,11 @@ while running:
                 else :
                     player.health = player.health
 
-            #prot 2
-            '''if game.pressed.get(pygame.K_s):
-                p1 = game.player.rect.x
-                p2 = game.playerII.rect.x
-                if game.pressed.get(pygame.K_DOWN):
-                    if p2 - p1 <= ECART2:
-                        player.health -= 0.000001
-                    else :
-                        player.health = player.health
-                else :
-                    player.health = player.health'''
-
-
-
-
             # joueur -> gauche ou droite
 
             if game.pressed.get(pyg.K_q) and game.player.rect.x > 0:
                 p1 = game.player.rect.x
                 p2 = game.playerII.rect.x
-                '''if p1 < (p2 - 5):
-                    game.player.rect.x = game.player.rect.x + 0
-                else:
-                    game.player.rect.x = game.player.rect.x + 1'''
                 game.player.move_left()
 
                 print('p1:')
