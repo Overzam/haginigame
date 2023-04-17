@@ -39,40 +39,40 @@ points = 0
 
 game_start = 0
 
-viseur = pyg.image.load('Assets/viseur.png')
+viseur = pyg.image.load('Assets/Tape_Taupe/viseur.png')
 
-marteau_normal = pyg.image.load('Assets/marteau45.png')
-marteau_frappe = pyg.image.load("Assets/marteau90.png")
+marteau_normal = pyg.image.load('Assets/Tape_Taupe/marteau45.png')
+marteau_frappe = pyg.image.load("Assets/Tape_Taupe/marteau90.png")
 
 marteau = marteau_normal
 
-facile = pyg.image.load('Assets/facile.png')
-difficile = pyg.image.load('Assets/difficile.png')
+facile = pyg.image.load('Assets/Tape_Taupe/facile.png')
+difficile = pyg.image.load('Assets/Tape_Taupe/difficile.png')
 
-trou_haut_x = width/2.04
-trou_haut_y = height/3.4
+trou_haut_x = 810#width/2.04
+trou_haut_y = 250#height/3.4
 
-trou_droite_x = width/3
-trou_droite_y = height/2.05
+trou_droite_x = 1700#width/3
+trou_droite_y = 540#height/2.05
 
-trou_gauche_x = width/1.5
-trou_gauche_y = height/2.05
+trou_gauche_x = 250#width/1.5
+trou_gauche_y = 540#height/2.05
 
-trou_bas_x = width/2.04
-trou_bas_y = height/1.5
+trou_bas_x = 810#width/2.04
+trou_bas_y = 800#height/1.5
 
 var_sortie = 0
 
 offset_marteau_x = -70
 offset_marteau_y = -160
 
-font = pyg.font.Font('Assets/Monocraft.otf', 100)
+font = pyg.font.Font('Assets/Tape_Taupe/Monocraft.otf', 100)
 
 facile_coll = Rect(100,300,800,400)
 difficile_coll = Rect(1000,300,800,400)
 
-victoire = pyg.image.load('Assets/win.png')
-defaite = pyg.image.load('Assets/defaite.png')
+victoire = pyg.image.load('Assets/Tape_Taupe/win.png')
+defaite = pyg.image.load('Assets/Tape_Taupe/defaite.png')
 
 Run_menu = True
 Run = False
@@ -104,10 +104,14 @@ while Run_menu:
                 timer_de_fin = 5100
                 temps = 50
 
-                taille_trou = 160
+                taille_trou_x = 500
+                taille_trou_y = 300
                 taille_taupe = 120
 
                 points_pour_win = 25
+
+                fond = pyg.image.load('Assets/Tape_Taupe/tape_taupe_ez.png')
+                fond = pyg.transform.scale(fond, (1920,1080))
 
                 Run_menu = False
                 Run = True
@@ -119,10 +123,13 @@ while Run_menu:
                 timer_de_fin = 2100
                 temps = 20
 
-                taille_trou = 80
+                taille_trou_x = 80
+                taille_trou_y = 80
                 taille_taupe = 40
 
                 points_pour_win = 50
+
+                fond = pyg.image.load('Assets/Tape_Taupe/tape_taupe_hard.png')
 
                 Run_menu = False
                 Run = True
@@ -130,17 +137,17 @@ while Run_menu:
     pyg.display.update()
     clock.tick(60)
 
-trou_haut = Rect(trou_haut_x, trou_haut_y, taille_trou, taille_trou)
-trou_droite = Rect(trou_droite_x,trou_droite_y, taille_trou, taille_trou)
-trou_gauche = Rect(trou_gauche_x, trou_gauche_y, taille_trou, taille_trou)
-trou_bas = Rect(trou_bas_x, trou_bas_y, taille_trou, taille_trou)
+trou_haut = Rect(trou_haut_x, trou_haut_y, taille_trou_x, taille_trou_y)
+trou_droite = Rect(trou_droite_x,trou_droite_y, taille_trou_x, taille_trou_y)
+trou_gauche = Rect(trou_gauche_x, trou_gauche_y, taille_trou_x, taille_trou_y)
+trou_bas = Rect(trou_bas_x, trou_bas_y, taille_trou_x, taille_trou_y)
 
-trou_HG = Rect(trou_gauche_x, trou_haut_y, taille_trou, taille_trou)
-trou_HD = Rect(trou_droite_x, trou_haut_y, taille_trou, taille_trou)
-trou_BG = Rect(trou_gauche_x, trou_bas_y, taille_trou, taille_trou)
-trou_BD = Rect(trou_droite_x, trou_bas_y, taille_trou, taille_trou)
+trou_HG = Rect(trou_gauche_x, trou_haut_y, taille_trou_x, taille_trou_y)
+trou_HD = Rect(trou_droite_x, trou_haut_y, taille_trou_x, taille_trou_y)
+trou_BG = Rect(trou_gauche_x, trou_bas_y, taille_trou_x, taille_trou_y)
+trou_BD = Rect(trou_droite_x, trou_bas_y, taille_trou_x, taille_trou_y)
 
-trou_mid = Rect(trou_haut_x,trou_droite_y, taille_trou, taille_trou)
+trou_mid = Rect(trou_haut_x,trou_droite_y, taille_trou_x, taille_trou_y)
 
 taupe_haut = (trou_haut_x + 20, trou_haut_y + 20,taille_taupe,taille_taupe)
 taupe_droite = (trou_droite_x + 20,trou_droite_y + 20,taille_taupe,taille_taupe)
@@ -155,7 +162,7 @@ taupe_BD = (trou_droite_x + 20, trou_bas_y + 20,taille_taupe,taille_taupe)
 taupe_mid = (trou_haut_x + 20, trou_droite_y + 20,taille_taupe,taille_taupe)
 
 while Run:
-    screen.fill((0,0,0))
+    screen.blit(fond, (0,0))
 
     aff_points = font.render(str(points), True, (255, 255, 255))
     
@@ -455,7 +462,7 @@ while Run:
         if event.type == MOUSEBUTTONUP:
             marteau = marteau_normal
             offset_marteau_x = -60
-            offset_marteau_y = - 160
+            offset_marteau_y = -160
             pos_marteau = list(pos_souris)
             pos_marteau[1] = pos_souris[1] + offset_marteau_y
             pos_marteau[0] = pos_souris[0] + offset_marteau_x
