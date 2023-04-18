@@ -49,17 +49,17 @@ marteau = marteau_normal
 facile = pyg.image.load('Assets/Tape_Taupe/facile.png')
 difficile = pyg.image.load('Assets/Tape_Taupe/difficile.png')
 
-trou_haut_x = 810#width/2.04
-trou_haut_y = 250#height/3.4
+trou_haut_x = 810         #width/2.04
+trou_haut_y = 250         #height/3.4
 
-trou_droite_x = 1700#width/3
-trou_droite_y = 540#height/2.05
+trou_droite_x = 1700       #width/3
+trou_droite_y = 540        #height/2.05
 
-trou_gauche_x = 250#width/1.5
-trou_gauche_y = 540#height/2.05
+trou_gauche_x = 250       #width/1.5
+trou_gauche_y = 540       #height/2.05
 
-trou_bas_x = 810#width/2.04
-trou_bas_y = 800#height/1.5
+trou_bas_x = 810          #width/2.04
+trou_bas_y = 800          #height/1.5
 
 var_sortie = 0
 
