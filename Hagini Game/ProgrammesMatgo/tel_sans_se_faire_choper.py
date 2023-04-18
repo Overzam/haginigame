@@ -1,4 +1,4 @@
-import sys
+import sys         
 
 import pygame as pyg
 import random
@@ -13,12 +13,20 @@ height = 1080
 
 screen = pyg.display.set_mode((width, height), 0, 32)
 
+jauge_visu = pyg.image.load('Assets/tel_sans_se_faire_choper/progress.png')
+end = pyg.image.load('Assets/tel_sans_se_faire_choper/end.png')
+
+victoire_screen = pyg.image.load('Assets/Tape_Taupe/win.png')
+defaite = pyg.image.load('Assets/Tape_Taupe/defaite.png')
+
 clock = pyg.time.Clock()
 
 random.seed()
 
 colors = [(0, 255, 0),(255, 0, 0)]
 color_switch = 0
+
+ending = -1
 
 i = 50 # compteur pour le cercle ( laisse du temps au joueur pou arréter d'appuyer )
 x = random.randrange(1,100,1) # compteur pour que le carré reste
@@ -28,11 +36,20 @@ carré_up = 0 # vérifie si le carré est présent
 
 button_pressed = 0 # vérifie si le bouton est préssé
 
-jauge = 0 # jauge de victoire (doit arriver a 1000)
-victoire = 1000 # objectif pour gagner
+jauge = 100 # jauge de victoire (doit arriver a 1000)
+victoire = 500 # objectif pour gagner
 
-while True:
+run = True
+run_fin = True
+
+while run:
     screen.fill((0, 0, 0))
+
+    screen.blit(jauge_visu, (20, 60))
+    jauge_visu = pyg.transform.scale(jauge_visu, (jauge, 10))
+
+    screen.blit(end, (470, 20))
+    end = pyg.transform.scale(end, (100, 100))
 
     pyg.draw.rect(screen, colors[color_switch], (width/3,height/2,50,50))
 
@@ -66,8 +83,9 @@ while True:
     if button_pressed == 1:
         if carré_up == 1:
             print("perdu")
-            pyg.quit()
-            sys.exit()
+            ending = 0
+            run_fin = True
+            run = False
 
     # augmente la jauge de victoire
     if button_pressed == 1:
@@ -76,9 +94,10 @@ while True:
 
     # condition de victoire
     if jauge == victoire:
+        ending = 1
         print("victoire")
-        pyg.quit()
-        sys.exit()
+        run_fin = True
+        run = False
 
     print(jauge)
 
@@ -93,20 +112,36 @@ while True:
         if event.type == KEYUP:
             if event.key == pyg.K_SPACE:
                 color_switch = 0
-                button_pressed = 0
-
-        # affiche quand la manette se connecte et déconnecte
-        if event.type == JOYDEVICEADDED:
-            joysticks = [pyg.joystick.Joystick(i) for i in range(pyg.joystick.get_count())]
-            print("manette connecté")
-        if event.type == JOYDEVICEREMOVED:
-            joysticks = [pyg.joystick.Joystick(i) for i in range(pyg.joystick.get_count())]
-            print("manette déconnecté")
+                button_pressed = 0  
 
         # fermer le jeu
         if event.type == QUIT:
             pyg.quit()
             sys.exit()
 
+    pyg.display.update()
+    clock.tick(60)
+
+while run_fin:
+
+    screen.fill((0, 0, 0))
+
+    if ending == 1:
+        screen.blit(victoire_screen, (0, 0))
+        victoire_screen = pyg.transform.scale(victoire_screen, (1920,1080))
+    else:
+        screen.blit(defaite, (0, 0))
+        defaite = pyg.transform.scale(defaite, (1920,1080))
+
+    for event in pyg.event.get():
+
+        if event.type == QUIT:
+            pyg.quit()
+            sys.exit()
+
+        if event.type == MOUSEBUTTONDOWN:
+            pyg.quit()
+            sys.exit()
+    
     pyg.display.update()
     clock.tick(60)
