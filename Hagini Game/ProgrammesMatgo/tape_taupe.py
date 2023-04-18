@@ -39,6 +39,8 @@ points = 0
 
 game_start = 0
 
+show_hitbox = -1
+
 viseur = pyg.image.load('Assets/Tape_Taupe/viseur.png')
 
 marteau_normal = pyg.image.load('Assets/Tape_Taupe/marteau45.png')
@@ -49,17 +51,17 @@ marteau = marteau_normal
 facile = pyg.image.load('Assets/Tape_Taupe/facile.png')
 difficile = pyg.image.load('Assets/Tape_Taupe/difficile.png')
 
-trou_haut_x = 810         #width/2.04
-trou_haut_y = 250         #height/3.4
+trou_haut_x = 810      
+trou_haut_y = 250      
 
-trou_droite_x = 1700       #width/3
-trou_droite_y = 540        #height/2.05
+trou_droite_x = 1700     
+trou_droite_y = 540     
 
-trou_gauche_x = 250       #width/1.5
-trou_gauche_y = 540       #height/2.05
+trou_gauche_x = 250      
+trou_gauche_y = 540       
 
-trou_bas_x = 810          #width/2.04
-trou_bas_y = 800          #height/1.5
+trou_bas_x = 810         
+trou_bas_y = 800          
 
 var_sortie = 0
 
@@ -104,14 +106,36 @@ while Run_menu:
                 timer_de_fin = 5100
                 temps = 50
 
-                taille_trou_x = 500
-                taille_trou_y = 300
                 taille_taupe = 120
 
                 points_pour_win = 25
 
-                fond = pyg.image.load('Assets/Tape_Taupe/tape_taupe_ez.png')
+                fond = pyg.image.load('Assets/Tape_Taupe/tape_taupe_ez.png').convert()
                 fond = pyg.transform.scale(fond, (1920,1080))
+
+                trou_haut = Rect(770, 370, 380, 150)
+                trou_droite = Rect(1225, 530, 460, 200)
+                trou_gauche = Rect(240, 530, 460, 200)
+                trou_bas = Rect(690, 745, 545, 280)
+
+                trou_HG = Rect(350, 370, 380, 150)
+                trou_HD = Rect(1190, 370, 380, 150)
+                trou_BG = Rect(80, 745, 560, 280)
+                trou_BD = Rect(1280, 745, 560, 280)
+
+                trou_mid = Rect(730, 530, 460, 200)
+
+                taupe_haut = (770 + 150, 370 + 30, 80, 80)
+                taupe_droite = (1225 + 160, 530 + 50, 100, 100)
+                taupe_gauche = (240 + 180, 530 + 60, 100, 100)
+                taupe_bas = (690 + 190, 745 + 80, 140, 140)
+
+                taupe_HG = (240 + 250, 370 + 30 , 80, 80)
+                taupe_HD = (1225 + 120, 370 + 30 ,80 ,80)
+                taupe_BG = (240 + 60, 745 + 70, 140, 140)
+                taupe_BD = (1225 + 260, 745 + 70, 140, 140)
+                
+                taupe_mid = (770 + 135, 530 + 50, 100, 100)
 
                 Run_menu = False
                 Run = True
@@ -123,43 +147,42 @@ while Run_menu:
                 timer_de_fin = 2100
                 temps = 20
 
-                taille_trou_x = 80
-                taille_trou_y = 80
                 taille_taupe = 40
 
                 points_pour_win = 50
 
-                fond = pyg.image.load('Assets/Tape_Taupe/tape_taupe_hard.png')
+                fond = pyg.image.load('Assets/Tape_Taupe/tape_taupe_hard.png').convert()
+                fond = pyg.transform.scale(fond, (1920,1080))
+
+                trou_haut = Rect(870, 375, 180, 110)
+                trou_droite = Rect(1225, 560, 210, 125)
+                trou_gauche = Rect(490, 560, 210, 125)
+                trou_bas = Rect(845, 800, 240, 170)
+
+                trou_HG = Rect(540, 370, 180, 110)
+                trou_HD = Rect(1190, 375, 180, 110)
+                trou_BG = Rect(420, 800, 240, 170)
+                trou_BD = Rect(1280, 800, 235, 170)
+
+                trou_mid = Rect(855, 565, 210, 125)
+
+                taupe_haut = (870 + 70, 375 + 30, 40, 40)
+                taupe_droite = (1225 + 75, 560 + 30, 60, 60)
+                taupe_gauche = (490 + 75, 560 + 30, 60, 60)
+                taupe_bas = (845 + 75, 800 + 30, 100, 100)
+
+                taupe_HG = (540 + 70, 370 + 30, 40, 40)
+                taupe_HD = (1190 + 70, 375 + 30, 40 ,40)
+                taupe_BG = (420 + 75, 800 + 30, 100, 100)
+                taupe_BD = (1280 + 75, 800 + 30, 100, 100)
+                
+                taupe_mid = (855 + 70, 565 + 30, 60, 60)
 
                 Run_menu = False
                 Run = True
 
     pyg.display.update()
     clock.tick(60)
-
-trou_haut = Rect(trou_haut_x, trou_haut_y, taille_trou_x, taille_trou_y)
-trou_droite = Rect(trou_droite_x,trou_droite_y, taille_trou_x, taille_trou_y)
-trou_gauche = Rect(trou_gauche_x, trou_gauche_y, taille_trou_x, taille_trou_y)
-trou_bas = Rect(trou_bas_x, trou_bas_y, taille_trou_x, taille_trou_y)
-
-trou_HG = Rect(trou_gauche_x, trou_haut_y, taille_trou_x, taille_trou_y)
-trou_HD = Rect(trou_droite_x, trou_haut_y, taille_trou_x, taille_trou_y)
-trou_BG = Rect(trou_gauche_x, trou_bas_y, taille_trou_x, taille_trou_y)
-trou_BD = Rect(trou_droite_x, trou_bas_y, taille_trou_x, taille_trou_y)
-
-trou_mid = Rect(trou_haut_x,trou_droite_y, taille_trou_x, taille_trou_y)
-
-taupe_haut = (trou_haut_x + 20, trou_haut_y + 20,taille_taupe,taille_taupe)
-taupe_droite = (trou_droite_x + 20,trou_droite_y + 20,taille_taupe,taille_taupe)
-taupe_gauche = (trou_gauche_x + 20, trou_gauche_y + 20, taille_taupe, taille_taupe)
-taupe_bas = (trou_bas_x + 20, trou_bas_y + 20,taille_taupe,taille_taupe)
-
-taupe_HG = (trou_gauche_x + 20, trou_haut_y + 20,taille_taupe,taille_taupe)
-taupe_HD = (trou_droite_x + 20, trou_haut_y + 20,taille_taupe,taille_taupe)
-taupe_BG = (trou_gauche_x + 20, trou_bas_y + 20,taille_taupe,taille_taupe)
-taupe_BD = (trou_droite_x + 20, trou_bas_y + 20,taille_taupe,taille_taupe)
-
-taupe_mid = (trou_haut_x + 20, trou_droite_y + 20,taille_taupe,taille_taupe)
 
 while Run:
     screen.blit(fond, (0,0))
@@ -177,25 +200,25 @@ while Run:
     pos_marteau[1] = pos_souris[1] + offset_marteau_y
     pos_marteau[0] = pos_souris[0] + offset_marteau_x
 
-    screen.blit(aff_points,(30,10))
+    screen.blit(aff_points,(500,90))
 
-    pyg.draw.rect(screen, (255, 0, 0), trou_haut, 1)
-    pyg.draw.rect(screen, (255, 0, 0), trou_gauche, 1)
-    pyg.draw.rect(screen, (255, 0, 0), trou_droite, 1)
-    pyg.draw.rect(screen, (255, 0, 0), trou_bas, 1)
+    pyg.draw.rect(screen, (255, 0, 0), trou_haut, show_hitbox)
+    pyg.draw.rect(screen, (255, 0, 0), trou_gauche, show_hitbox)
+    pyg.draw.rect(screen, (255, 0, 0), trou_droite, show_hitbox)
+    pyg.draw.rect(screen, (255, 0, 0), trou_bas, show_hitbox)
     
-    pyg.draw.rect(screen, (255, 0, 0), trou_HG, 1)
-    pyg.draw.rect(screen, (255, 0, 0), trou_HD, 1)
-    pyg.draw.rect(screen, (255, 0, 0), trou_BG, 1)
-    pyg.draw.rect(screen, (255, 0, 0), trou_BD, 1)
+    pyg.draw.rect(screen, (255, 0, 0), trou_HG, show_hitbox)
+    pyg.draw.rect(screen, (255, 0, 0), trou_HD, show_hitbox)
+    pyg.draw.rect(screen, (255, 0, 0), trou_BG, show_hitbox)
+    pyg.draw.rect(screen, (255, 0, 0), trou_BD, show_hitbox)
     
-    pyg.draw.rect(screen, (255, 0, 0), trou_mid, 1)
+    pyg.draw.rect(screen, (255, 0, 0), trou_mid, show_hitbox)
 
     if timer_de_fin == temps * 100:
         temps -= 1
 
     aff_temps = font.render(str(temps), True, (255, 255, 255))
-    screen.blit(aff_temps,(1700,20))
+    screen.blit(aff_temps,(1300,90))
 
     # généré une nouvelle valeur, un nouveau carré
     if bout_OK == 1:
@@ -483,9 +506,11 @@ while Run_fin:
     screen.fill((0, 0, 0))
 
     if points == points_pour_win:
-        screen.blit(victoire, (50, 50))
+        screen.blit(victoire, (0, 0))
+        victoire = pyg.transform.scale(victoire, (1920,1080))
     else:
-        screen.blit(defaite, (50, 50))
+        screen.blit(defaite, (0, 0))
+        defaite = pyg.transform.scale(defaite, (1920,1080))
 
     for event in pyg.event.get():
 
