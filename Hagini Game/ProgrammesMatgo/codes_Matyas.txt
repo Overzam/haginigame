@@ -1,0 +1,17 @@
+Tape_taupe.py : 
+	Il y a d'abord le choix entre un mode facile et difficile, changeant : le temps pour taper les taupes, la taille des trou, le nombre de point a faire, le temps.
+	il faut ensuite jouer a la souris et taper les taupes qui apparaissent avec clic gauche
+
+Combat.py :
+	a terme, le fond sera la cour de bury, en tant que placeholder j'ai utiliser l'interface d'ordinateur de Elwan
+	en reculant avec D, on se rend compte que on est bloqué par quelque chose d'invisible, a terme, il y aura des barrère pour facilité la compréhension
+	de plus on est bloquer par l'IA qu'on ne peut dépasser lorsqu'on avance avec Q
+	l'IA bouge de manière pseudo-aléatoire, a certaine chance de frapper le jouer quand il est coller a lui, et avance lorsque le personnage recule
+	Il est possible de frapper avec Z, cela baissera la vie de l'adversaire si vous êtes collés, et augmentera votre jauge de coup spéciale
+	lorsque la jauge est pleine, une petite animation de boule de feu se fait ce qui fait un coup faisant plus de dégat
+
+Tel_sans_se_faire_choper.py :
+	lorsque on appuie sur ESPACE, Le carré devient rouge, ce qui signifie que le joueur est sur son téléphone, sinon il ne l'est pas ( quand le carré est vert )
+	lorsque un rond bleu apparait, c'est que le professeur s'apprète a rentrer, il faut donc arréter de maintenir ESPACE
+	si vous etes sur votre téléphone ( que vous maintenez espace ) et que le professeur est rentrer ( carré bleu présent ), vous perdez
+	il y a une petite barre verte qui s'avance quand on appuie sur espace, qui doit arriver a la ligne d'arrivé pour gagner
