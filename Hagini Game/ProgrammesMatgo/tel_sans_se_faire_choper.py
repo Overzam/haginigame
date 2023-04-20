@@ -71,13 +71,14 @@ while run:
     screen.blit(end, (470, 20))
     end = pyg.transform.scale(end, (100, 100))
 
-    screen.blit(perso, (50, 50))
-    perso = pyg.transform.scale(perso, (120,200))
+    screen.blit(perso, (650, 630))
+    perso = pyg.transform.scale(perso, (425,425))
 
     classe_etat = 0
 
     if warn == 1:
         perso = pyg.image.load('Assets/tel_sans_se_faire_choper/perso_tel_non.png')
+        perso = pyg.transform.scale(perso, (425,425))
     print(warn)
 
     # temps que le cercle n'apparait pas ( que pop n'est pas egal a 1 ), génère des valeurs
@@ -135,6 +136,7 @@ while run:
                 button_pressed = 1
                 # change la couleur du bouton (a terme, changer le sprite de l'élève)
                 perso = pyg.image.load('Assets/tel_sans_se_faire_choper/perso_tel.png')
+                perso = pyg.transform.scale(perso, (425,425))
                 warn = 0
 
         if event.type == KEYUP:
