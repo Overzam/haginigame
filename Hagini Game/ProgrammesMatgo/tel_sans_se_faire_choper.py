@@ -19,6 +19,18 @@ end = pyg.image.load('Assets/tel_sans_se_faire_choper/end.png')
 victoire_screen = pyg.image.load('Assets/Tape_Taupe/win.png')
 defaite = pyg.image.load('Assets/Tape_Taupe/defaite.png')
 
+perso = pyg.image.load('Assets/tel_sans_se_faire_choper/perso_tel_non.png')
+
+classe = pyg.image.load('Assets/tel_sans_se_faire_choper/classe.png')
+classe_attention = pyg.image.load('Assets/tel_sans_se_faire_choper/prof_approche.png')
+classe_prof = pyg.image.load('Assets/tel_sans_se_faire_choper/prof_la.png')
+
+classe = pyg.transform.scale(classe, (1920, 1080))
+classe_attention = pyg.transform.scale(classe_attention, (1920, 1080))
+classe_prof = pyg.transform.scale(classe_prof, (1920, 1080))
+
+classe_etat = 0  # 0 = chill, 1 = attention, 2 = prof
+
 clock = pyg.time.Clock()
 
 random.seed()
@@ -39,11 +51,19 @@ button_pressed = 0 # vérifie si le bouton est préssé
 jauge = 100 # jauge de victoire (doit arriver a 1000)
 victoire = 500 # objectif pour gagner
 
+warn = 1
+
 run = True
 run_fin = True
 
 while run:
-    screen.fill((0, 0, 0))
+
+    if classe_etat == 0:
+        screen.blit(classe, (0, 0))
+    if classe_etat == 1:
+        screen.blit(classe_attention, (0, 0))
+    if classe_etat == 2:
+        screen.blit(classe_prof, (0, 0))
 
     screen.blit(jauge_visu, (20, 60))
     jauge_visu = pyg.transform.scale(jauge_visu, (jauge, 10))
@@ -51,7 +71,14 @@ while run:
     screen.blit(end, (470, 20))
     end = pyg.transform.scale(end, (100, 100))
 
-    pyg.draw.rect(screen, colors[color_switch], (width/3,height/2,50,50))
+    screen.blit(perso, (50, 50))
+    perso = pyg.transform.scale(perso, (120,200))
+
+    classe_etat = 0
+
+    if warn == 1:
+        perso = pyg.image.load('Assets/tel_sans_se_faire_choper/perso_tel_non.png')
+    print(warn)
 
     # temps que le cercle n'apparait pas ( que pop n'est pas egal a 1 ), génère des valeurs
     if attention == 0:
@@ -60,13 +87,13 @@ while run:
     # vérifie quand la valeur 1 arrive, bloque la génération d'autre valeurs, fait apparaitre un cercle, et commence un décompte pour faire apparaitre le carré
     if pop == 1:
         attention = 1
-        pyg.draw.circle(screen,(255,0,0),(width/2,height/3),50,2)
+        classe_etat = 1
         if i > 0:
             i -= 1
 
      # une fois décompte du carré fait, le fait apparaitre, et commence un autre décompte pour le faire disparaitre
     if i == 0:
-        pyg.draw.rect(screen, (0, 0, 255), (width/2.05,height/3.2, 50, 50))
+        classe_etat = 2
         carré_up = 1
         if x > 0:
             x -= 1
@@ -107,12 +134,14 @@ while run:
             if event.key == pyg.K_SPACE:
                 button_pressed = 1
                 # change la couleur du bouton (a terme, changer le sprite de l'élève)
-                color_switch = 1
+                perso = pyg.image.load('Assets/tel_sans_se_faire_choper/perso_tel.png')
+                warn = 0
 
         if event.type == KEYUP:
             if event.key == pyg.K_SPACE:
                 color_switch = 0
                 button_pressed = 0  
+                warn = 1
 
         # fermer le jeu
         if event.type == QUIT:
