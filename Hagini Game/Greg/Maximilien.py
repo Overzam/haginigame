@@ -280,15 +280,6 @@ def citation(height,width,son):
 
     while Jeu_Lance:
 
-        for event in pyg.event.get():
-            if event.type == pyg.QUIT:
-                Jeu_Lance = False
-
-            if event.type == pyg.KEYDOWN:
-                if event.key == pyg.K_ESCAPE: # retour au menu
-                    Jeu_Lance = False
-
-
         Duree_Tempo = round(Duree_Anim - ((
                                                       pyg.time.get_ticks() - start_ticks) / 1000))  # Duree du temps avant le commencement du jeu en secondes
         pos = pyg.mouse.get_pos()
@@ -311,6 +302,10 @@ def citation(height,width,son):
             # Definis la croix pour fermer la fenetre
             if event.type == pyg.QUIT:
                 pyg.quit()
+               
+            if event.type == pyg.KEYDOWN:
+                if event.key == pyg.K_ESCAPE: # retour au menu
+                    Jeu_Lance = False
 
             if Duree_Tempo <= 0:
                 if event.type == KEYDOWN:
