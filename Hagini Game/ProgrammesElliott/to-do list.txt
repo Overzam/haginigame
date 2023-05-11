@@ -1,0 +1,16 @@
+Partie menu:
+  Boîte de dialogue:
+    - taille de la police en fonction de la taille de l'écran
+    - méthode pour gérer les dialogues de manière situationnelle (si x alors passer sur tel dialogue)
+  Menu:
+    - reformer spritelist pour qu'elle soit compréhensible
+- Menu statistiques, création de nouvellee classes de données (dataclasses) pour les pièces du véhicule
+- Affichage de M. Latour
+- Affichage du véhicule, positionnement des images sélectionnées les unes sur les autres (= assemblage visuel du véhicule)
+- Disposition menu déroulant, menu statistiques, menu dialogue et affichage du véhicule
+- Timer pour que le joueur ne reste pas trop longtemps dans les menus?
+
+Partie mini-jeu:
+- Déplacement d'une carte géante au lieu d'un avatar
+- Apparition des cibles
+- Animation des explosions (réutilisation de ce qu'a fait Dylan)
